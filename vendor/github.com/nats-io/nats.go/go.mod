@@ -1,5 +1,7 @@
 module github.com/nats-io/nats.go
 
+go 1.14
+
 require (
 	github.com/nats-io/jwt v0.3.2
 	github.com/nats-io/nkeys v0.1.4

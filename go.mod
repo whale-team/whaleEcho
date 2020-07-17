@@ -9,6 +9,7 @@ require (
 	github.com/gobwas/ws v1.0.3
 	github.com/golang/protobuf v1.4.2
 	github.com/google/uuid v1.1.1
+	github.com/gorilla/websocket v1.4.0
 	github.com/mailru/easygo v0.0.0-20190618140210-3c14a0dc985f
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/nats-io/nats-server/v2 v2.1.7 // indirect
@@ -20,5 +21,6 @@ require (
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.5.1
 	github.com/vicxu416/goinfra v0.0.12
+	go.uber.org/fx v1.13.0
 	google.golang.org/protobuf v1.25.0
 )
