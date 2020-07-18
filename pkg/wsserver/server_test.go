@@ -35,6 +35,7 @@ func TestEchoHandle(t *testing.T) {
 		time.Sleep(1000 * time.Millisecond)
 		err = conn.Close()
 		assert.Nil(t, err)
+		t.Log("connection closed")
 	}()
 
 	conn2, _, _ := websocket.DefaultDialer.Dial("ws://127.0.0.1:1333", nil)

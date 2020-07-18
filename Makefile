@@ -34,6 +34,8 @@ test:
 test.all:
 	$(GOTEST) $(TESTPATH)/... -count=1
 
+test.pkg:
+	$(GOTEST) $(PRJ_PATH)/pkg/...
 
 bench.proto: $(PRJ_PATH)/pkg/echoproto/proto_test.go
 	$(GOTEST) $(PRJ_PATH)/pkg/echoproto -run=None -bench=. --benchmem
