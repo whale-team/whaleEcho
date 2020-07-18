@@ -9,6 +9,7 @@ GORUN=$(GOCMD) run
 GOTEST=$(GOCMD) test -v
 GOMOD=$(GOCMD) mod
 TESTPATH=$(PRJ_PATH)/internal/pkg/test
+IMAGE_TAG=$(latest)
 
 configs.app.yaml: configs/app-dev.yaml
 	cp configs/app-dev.yaml configs/app.yaml 
@@ -39,3 +40,15 @@ test.pkg:
 
 bench.proto: $(PRJ_PATH)/pkg/echoproto/proto_test.go
 	$(GOTEST) $(PRJ_PATH)/pkg/echoproto -run=None -bench=. --benchmem
+
+build.image:
+	docker build -t=$(DOCKEHUB)/whaleecho:$(IMAGE_TAG) -f $(PRJ_PATH)/deployments/docker/Dockerfile .
+
+push.image:
+	docker push $(DOCKEHUB)/whaleecho
+
+start.containers: $(PRJ_PATH)/deployments/docker/docker-compose.yaml
+	docker-compose -p $(PRJ_NAME) -f $(PRJ_PATH)/deployments/docker/docker-compose.yaml up
+
+teardown.containers: $(PRJ_PATH)/deployments/docker/docker-compose.yaml
+	docker-compose -p $(PRJ_NAME) -f $(PRJ_PATH)/deployments/docker/docker-compose.yaml down

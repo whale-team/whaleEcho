@@ -1,0 +1,23 @@
+version: '3'
+services:
+  whaleEcho:
+    image: "whaleteam/whaleecho:latest"
+    ports:
+    - "10033:10033"
+    volumes:
+    - ../../configs:/whaleEcho/configs
+    networks:
+    - echonet
+    environment: 
+    - ENV=docker_dev
+    depends_on: 
+    - nats
+    environment: 
+    - CONFIG_NAME=app-container
+  nats:
+    image: "nats:latest"
+    networks:
+    - echonet
+
+networks:
+  echonet:
