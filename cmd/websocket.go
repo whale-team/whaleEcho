@@ -26,7 +26,7 @@ func runWebsocket(cmd *cobra.Command, args []string) {
 
 	server := wsserver.New()
 	server.Handler = logMiddleware(wsserver.EchoHandle)
-	server.ErrHandler = func(err error) {
+	server.ErrHandler = func(c *wsserver.Context, err error) {
 		log.Error().Stack().Err(err).Msg("read message failed")
 	}
 	server.ConnBuildHandleFunc = wsserver.ConnBuildHandle
