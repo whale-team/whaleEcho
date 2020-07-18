@@ -1,45 +1,64 @@
 package entity
 
 import (
-	"encoding/json"
-	"sync"
+	"time"
 
 	"github.com/nats-io/nats.go"
+	"github.com/whale-team/whaleEcho/internal/pkg/app/entity/value"
+	"github.com/whale-team/whaleEcho/pkg/echoproto"
+	"google.golang.org/protobuf/proto"
 )
+
+type SysMessage Message
+
+// RoomCloseMessage 房間關閉的系統訊息
+var RoomCloseMessage = &Message{
+	Text: "room is closed",
+}
 
 // Message represent websocket message
 type Message struct {
 	*nats.Msg
-	payload Payload
-	once    sync.Once
+	UID      string
+	Text     string
+	File     []byte
+	FileType string
+	Type     value.MessageType
+	Room     Room
+	Sender   User
+	SentAt   int64
+
+	rawData []byte
 }
 
-// Payload ...
-type Payload struct {
-	UserID   string
-	UserName string
-	Body     string
+func (m *Message) SetRawData(data []byte) {
+	m.rawData = data
 }
 
-// Body ...
-func (m *Message) Body() string {
-	return m.getPayload().Body
-}
+func (m *Message) GetData() []byte {
+	if m.Msg == nil {
+		return m.toData()
+	}
 
-// Payload ...
-func (m *Message) Payload() Payload {
-	return m.getPayload()
-}
-
-func (m *Message) Data() []byte {
 	return m.Msg.Data
 }
 
-func (m *Message) getPayload() Payload {
-	m.once.Do(func() {
-		payload := Payload{}
-		json.Unmarshal(m.Data(), &payload)
-		m.payload = payload
-	})
-	return m.payload
+func (m Message) toData() []byte {
+	msgProto := &echoproto.Message{}
+	msgProto.Text = m.Text
+
+	data, _ := proto.Marshal(msgProto)
+	return data
+}
+
+func (m Message) Subject() string {
+	return m.Room.Subject()
+}
+
+func (m Message) SentAtTime() time.Time {
+	return time.Unix(m.SentAt, 0)
+}
+
+func (m *Message) ToMsgData() []byte {
+	return m.rawData
 }

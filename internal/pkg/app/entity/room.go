@@ -1,11 +1,11 @@
-package roomcenter
+package entity
 
 import (
 	"sync"
-	"github.com/whale-team/whaleEcho/internal/pkg/app/entity"
 
 	"github.com/gammazero/workerpool"
 	"github.com/nats-io/nats.go"
+	"github.com/whale-team/whaleEcho/pkg/subjects"
 )
 
 const (
@@ -19,32 +19,41 @@ func NewRoom() *Room {
 		workers:      workerpool.New(30),
 		workerSize:   30,
 		wg:           &sync.WaitGroup{},
+		closedMsg:    RoomCloseMessage,
 	}
 }
 
 type Participant interface {
-	Receive(msg *entity.Message) error
-	GetID() string
+	Receive(msg *Message) error
+	GetID() int64
 }
 
 // Room represent chating room
 type Room struct {
-	ID           int64
-	UID          string
-	Limit        int64
+	ID          int64
+	UID         string
+	Limit       int64
+	CreatorID   int64
+	CreatorName string
+
 	Participants sync.Map
 	Subscribe    Subscriber
 	msgCh        <-chan *nats.Msg
+	joinCh       <-chan *nats.Msg
 	closeSignal  chan struct{}
 	workers      *workerpool.WorkerPool
 	workerSize   int64
 	mu           sync.RWMutex
 	closed       bool
-	closedMsg    *entity.Message
+	closedMsg    *Message
 	wg           *sync.WaitGroup
 }
 
-func (r *Room) SetClosedMsg(msg *entity.Message) {
+func (r *Room) Subject() string {
+	return subjects.RoomSubject(r.UID)
+}
+
+func (r *Room) SetClosedMsg(msg *Message) {
 	r.closedMsg = msg
 }
 
@@ -64,7 +73,7 @@ func (r *Room) Run() {
 	go r.run()
 }
 
-func (r *Room) PushMessage(msg *entity.Message) {
+func (r *Room) PushMessage(msg *Message) {
 	r.Participants.Range(func(key, val interface{}) bool {
 		r.workers.Submit(func() {
 			receiver := val.(Participant)
@@ -80,7 +89,7 @@ func (r *Room) run() {
 	for {
 		select {
 		case msg := <-r.msgCh:
-			r.PushMessage(&entity.Message{Msg: msg})
+			r.PushMessage(&Message{Msg: msg})
 		case <-r.closeSignal:
 			r.closed = true
 			r.notifyClose()
@@ -107,5 +116,5 @@ func (r *Room) Close() {
 type Subscriber interface {
 	Unsubscribe() error
 	Drain() error
-	IsValid() error
+	IsValid() bool
 }
