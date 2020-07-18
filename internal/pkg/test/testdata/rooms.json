@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "uid": "1234-423wasdf-234123-33",
+    "name": "helloworld",
+    "creator_id": 12,
+    "creator_name": "vic",
+    "participants_limit": 100
+  },
+  {
+    "id": 2,
+    "uid": "1234-423wasdf-2341244-33",
+    "name": "helloworld2",
+    "creator_id": 12,
+    "creator_name": "vic",
+    "participants_limit": 2
+  },
+  {
+    "id": 3,
+    "uid": "3434-423wasdf-2341244-33",
+    "name": "helloworld3",
+    "creator_id": 12,
+    "creator_name": "vic",
+    "participants_limit": 2
+  }
+
+]

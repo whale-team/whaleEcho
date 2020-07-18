@@ -2,8 +2,8 @@ package entity_test
 
 import (
 	"time"
+
 	"github.com/whale-team/whaleEcho/internal/pkg/app/entity"
-	"github.com/whale-team/whaleEcho/internal/pkg/app/entity/roomcenter"
 
 	"github.com/nats-io/nats.go"
 	"github.com/stretchr/testify/mock"
@@ -13,7 +13,7 @@ import (
 )
 
 type MockReceiver struct {
-	id string
+	id int64
 	mock.Mock
 }
 
@@ -22,7 +22,7 @@ func (r *MockReceiver) Receive(msg *entity.Message) error {
 	return args.Error(0)
 }
 
-func (r *MockReceiver) GetID() string {
+func (r *MockReceiver) GetID() int64 {
 	return r.id
 }
 
@@ -39,8 +39,8 @@ func (m *MockSub) Drain() error {
 	return nil
 }
 
-func (m *MockSub) IsValid() error {
-	return nil
+func (m *MockSub) IsValid() bool {
+	return true
 }
 
 var _ = Describe("Room Entity", func() {
@@ -48,7 +48,7 @@ var _ = Describe("Room Entity", func() {
 	closedMsg := &entity.Message{Msg: &nats.Msg{Data: []byte("closed")}}
 
 	Describe("#Run", func() {
-		room := roomcenter.NewRoom()
+		room := entity.NewRoom()
 		sub := &MockSub{}
 		room.Subscribe = sub
 		room.SetClosedMsg(closedMsg)
@@ -57,7 +57,7 @@ var _ = Describe("Room Entity", func() {
 			ch := make(chan *nats.Msg, 1)
 			room.SetMsgChannel(ch)
 			room.Run()
-			mock := &MockReceiver{id: "testing"}
+			mock := &MockReceiver{id: 1234324}
 			room.Join(mock)
 
 			testMsg := &nats.Msg{Data: []byte("testing")}
@@ -69,7 +69,7 @@ var _ = Describe("Room Entity", func() {
 					go func() { ch <- testMsg }()
 				}
 
-				time.Sleep(200 * time.Millisecond)
+				time.Sleep(300 * time.Millisecond)
 				mock.AssertExpectations(GinkgoT())
 				mock.AssertNumberOfCalls(GinkgoT(), "Receive", n)
 			})
@@ -85,7 +85,7 @@ var _ = Describe("Room Entity", func() {
 	})
 
 	Describe("#Leave", func() {
-		room := roomcenter.NewRoom()
+		room := entity.NewRoom()
 		sub := &MockSub{}
 		room.Subscribe = sub
 		testMsg := &nats.Msg{Data: []byte("testing")}
@@ -95,7 +95,7 @@ var _ = Describe("Room Entity", func() {
 			ch := make(chan *nats.Msg, 1)
 			room.SetMsgChannel(ch)
 			room.Run()
-			mock := &MockReceiver{id: "testing"}
+			mock := &MockReceiver{id: 123342}
 			room.Join(mock)
 			It("should not receive message", func() {
 				room.Leave(mock)
