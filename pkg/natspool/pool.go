@@ -25,7 +25,7 @@ func New(config Config) (Pool, error) {
 		factory: factory,
 		maxConn: config.PoolSize,
 		wg:      &sync.WaitGroup{},
-		timeout: config.GetConnTimeout,
+		timeout: time.Duration(config.GetConnTimeout) * time.Second,
 	}
 
 	return pool, initPool(pool)

@@ -79,14 +79,12 @@ func TestShutdown(t *testing.T) {
 	}()
 
 	conn, err := pool.Get()
-	conn.ChanSubscribe
 	assert.Nil(t, err)
 	conn.Subscribe("test.test", func(msg *nats.Msg) {
 		fmt.Printf("rec msg: %s, from topic: %s\n", string(msg.Data), msg.Subject)
 		time.Sleep(200 * time.Millisecond)
 	})
 	conn.Recycle()
-	conn.Subscribe()
 
 	conn, err = pool.Get()
 	assert.Nil(t, err)

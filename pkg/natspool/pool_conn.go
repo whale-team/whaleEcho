@@ -12,20 +12,20 @@ type ConnFactory func() (*nats.Conn, error)
 
 // Config represent nats connection configuration
 type Config struct {
-	Host           string `yaml:"host"`
-	ReconnWait     time.Duration
-	ReconnDelay    time.Duration
-	PoolSize       int64 `json:"pool_size"`
-	GetConnTimeout time.Duration
+	Addr           string `yaml:"addr"`
+	ReconnWait     int64  `yaml:"reconn_wait"`
+	ReconnDelay    int64  `yaml:"reconn_delay"`
+	PoolSize       int64  `yaml:"pool_size"`
+	GetConnTimeout int64  `yaml:"conn_timeout"`
 }
 
 // TestConfig config for testing nats connection
 var TestConfig = Config{
-	Host:           "demo.nats.io:4222",
-	ReconnDelay:    time.Second,
-	ReconnWait:     10 * time.Minute,
+	Addr:           "demo.nats.io:4222",
+	ReconnDelay:    1,
+	ReconnWait:     int64(10 * time.Minute),
 	PoolSize:       5,
-	GetConnTimeout: 200 * time.Millisecond,
+	GetConnTimeout: 1,
 }
 
 func connFactory(config Config) ConnFactory {
@@ -36,9 +36,9 @@ func connFactory(config Config) ConnFactory {
 
 func buildConn(config Config) (*nats.Conn, error) {
 	opts := make([]nats.Option, 0, 3)
-	opts = append(opts, nats.ReconnectWait(config.ReconnWait))
+	opts = append(opts, nats.ReconnectWait(time.Duration(config.ReconnWait)*time.Second))
 	opts = append(opts, nats.MaxReconnects(int(config.ReconnWait/config.ReconnDelay)))
-	return nats.Connect(config.Host, opts...)
+	return nats.Connect(config.Addr, opts...)
 }
 
 // PoolConn ...
