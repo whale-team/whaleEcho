@@ -3,41 +3,37 @@ syntax = "proto3";
 option go_package = "github.com/whale-team/whaleEcho/pkg/echoproto";
 import "enum.proto";
 
-
 message Command {
   CommandType type = 1;
   bytes payload = 2;
-  User sender = 3;
-}
-
-message CommandResp {
-  RespStatus status = 1;
-  repeated string messages = 2;
-  bool failed = 3;
-  bool successful = 4;
 }
 
 message User {
   int64 id = 1;
   string uid = 2;
   string name = 3;
-  string token = 4;
 }
 
 message Room {
   int64 id = 1;
   string uid = 2;
   string name = 3;
-  string creator_id = 4;
+  int64 creator_id = 4;
   string creator_name = 5;
   int64 participants_limit = 6;
   int64 live_duration = 7;
+  User participant = 8;
 }
 
 message Message {
-  int64 id = 1;
-  string sender_id = 2;
-  string sender_name = 3;
-  string body = 4;
-  MessageType type = 5;
+  string uid  = 1;
+  User sender = 2;
+  Room room = 3;
+  string text = 4;
+  bytes file = 5;
+  string file_type = 6;
+  MessageType type = 7;
+  int64 sent_at = 8;
+  Status status = 9;
+  repeated string messages = 10;
 }

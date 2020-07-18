@@ -2,24 +2,15 @@ syntax = "proto3";
 
 option go_package = "github.com/whale-team/whaleEcho/pkg/echoproto";
 
-enum CommandType {
-  _CommandNone = 0;
-  
-  CreateRoom = 1;
-  CloseRoom = 2;
-  EnterRoom = 3;
-  LeaveRoom = 4;
-
-  SendMessage = 5;
-}
-
 enum MessageType {
   _MessageNone = 0;
 
   Text = 1;
+  File = 2;
+  Response = 3;
 }
 
-enum RespStatus {
+enum Status {
   _StatusNone = 0;
 
   OK = 1;
@@ -31,4 +22,12 @@ enum RespStatus {
   ErrBusy = 5;
   ErrUnKnown = 6;
   ErrInputInvalid = 7;
+}
+
+enum CommandType {
+  _CommandNone = 0;
+
+  JoinRoom = 1;
+  SendMessage = 2;
+  LeaveRoom = 3;
 }
