@@ -1,56 +1,47 @@
 package natsbroker
 
 import (
+	"context"
+
+	"github.com/nats-io/nats.go"
+	"github.com/whale-team/whaleEcho/internal/pkg/app/entity"
+	"github.com/whale-team/whaleEcho/internal/pkg/app/msgbroker"
 	"github.com/whale-team/whaleEcho/pkg/natspool"
 )
 
-// NatsBroker ...
-type NatsBroker struct {
-	Client natspool.Client
+func New(client natspool.Client) msgbroker.MsgBroker {
+	return &NatsBroker{
+		client: client,
+	}
 }
 
-// // Publish ...
-// func (broker NatsBroker) Publish(ctx context.Context, topic model.Topic, msg model.Message) error {
-// 	conn, err := broker.Client.Conn()
-// 	if err != nil {
-// 		return errors.Wrap(err, "broker#Publish: get client connection failed")
-// 	}
-// 	data, err := json.Marshal(&msg)
-// 	if err != nil {
-// 		return errors.Wrap(err, "broker#Publish: unmarshaling message struct failed")
-// 	}
-// 	err = conn.Publish(topic.String(), data)
-// 	if err != nil {
-// 		return errors.Wrap(err, "broker#Publish: message failed")
-// 	}
-// 	err = broker.Client.FlushAndClose(conn, false)
-// 	if err != nil {
-// 		return errors.Wrap(err, "broker#Publish: publish message failed")
-// 	}
-// 	if err := conn.LastError(); err != nil {
-// 		return errors.Wrap(err, "broker:Publish: conn encounter unknown filed")
-// 	}
-// 	return nil
-// }
+// NatsBroker ...
+type NatsBroker struct {
+	client natspool.Client
+}
 
-// // Subscribe ...
-// func (broker NatsBroker) Subscribe(ctx context.Context, topic model.Topic, callback app.SubCallback) (app.ConnCloser, error) {
-// 	conn, err := broker.Client.Conn()
-// 	if err != nil {
-// 		return nil, errors.Wrap(err, "broker#Subsribe: get client connection failed")
-// 	}
-// 	_, err = conn.Subscribe(topic.String(), func(message *nats.Msg) {
-// 		msg := model.Message{}
-// 		err := json.Unmarshal(message.Data, &msg)
-// 		callback(ctx, msg, err)
-// 	})
-// 	if err != nil {
-// 		return nil, errors.Wrap(err, "broker#Subsribe: subscribe topic failed")
-// 	}
+func (broker NatsBroker) BindChannelWithSubject(ctx context.Context, subject string, ch chan *nats.Msg) (entity.Subscriber, error) {
+	conn, err := broker.client.SubConn()
+	if err != nil {
+		return nil, err
+	}
 
-// 	if err := conn.LastError(); err != nil {
-// 		return nil, errors.Wrap(err, "broker#Subsribe: conn encounter unknown failed")
-// 	}
+	sub, err := conn.ChanSubscribe(subject, ch)
+	if err != nil {
+		return nil, err
+	}
 
-// 	return conn, nil
-// }
+	if err := conn.Recycle(); err != nil {
+		return nil, err
+	}
+
+	return sub, nil
+}
+
+func (broker NatsBroker) PublishMessage(ctx context.Context, subject string, message []byte) error {
+	conn, err := broker.client.PubConn()
+	if err != nil {
+		return err
+	}
+	return conn.Publish(subject, message)
+}
