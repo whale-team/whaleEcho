@@ -43,6 +43,10 @@ func (c Context) Close() error {
 	return c.Conn.OnceClose()
 }
 
-func (c Context) Write(data []byte) error {
-	return wsutil.WriteServerMessage(c.Conn, c.opcode, data)
+func (c Context) WriteBinary(data []byte) error {
+	return wsutil.WriteServerBinary(c.Conn, data)
+}
+
+func (c Context) WriteText(data []byte) error {
+	return wsutil.WriteServerText(c.Conn, data)
 }

@@ -99,17 +99,18 @@ func (serv *SocketServer) registerNetpoll(c *Context, conn net.Conn) {
 		if event&netpoll.EventHup != 0 || event&netpoll.EventReadHup != 0 {
 			serv.wg.Done()
 			serv.poller.Stop(desc)
+			serv.ConnCloseHandler(c)
 			return
 		}
 		go func() {
 			if err := c.read(); err != nil {
 				if err := serv.handleCloseErr(err, c); err != nil {
-					serv.ErrHandler(err)
+					serv.ErrHandler(c, err)
 				}
 				return
 			}
 			if err := serv.Handler(c); err != nil {
-				serv.ErrHandler(err)
+				serv.ErrHandler(c, err)
 			}
 		}()
 	})

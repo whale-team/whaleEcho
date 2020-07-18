@@ -1,12 +1,10 @@
 package wsserver
 
 import (
-	"context"
 	"testing"
 	"time"
 
-	"github.com/gobwas/ws"
-	"github.com/gobwas/ws/wsutil"
+	"github.com/gorilla/websocket"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -20,17 +18,18 @@ func TestEchoHandle(t *testing.T) {
 
 	time.Sleep(50 * time.Millisecond)
 
-	ctx := context.Background()
-	conn, _, _, err := ws.DefaultDialer.Dial(ctx, "ws://127.0.0.1:1333")
+	conn, _, err := websocket.DefaultDialer.Dial("ws://127.0.0.1:1333", nil)
 	assert.Nil(t, err)
 
 	msg := "hello!"
-	wsutil.WriteMessage(conn, ws.StateClientSide, ws.OpText, []byte(msg))
+	err = conn.WriteMessage(websocket.TextMessage, []byte(msg))
 
-	data, op, err := wsutil.ReadServerData(conn)
 	assert.Nil(t, err)
-	assert.Equal(t, op, ws.OpText)
-	assert.Equal(t, data, []byte(msg))
+
+	_, data, err := conn.ReadMessage()
+	assert.Nil(t, err)
+
+	assert.Equal(t, []byte(msg), data)
 
 	go func() {
 		time.Sleep(1000 * time.Millisecond)
@@ -38,7 +37,7 @@ func TestEchoHandle(t *testing.T) {
 		assert.Nil(t, err)
 	}()
 
-	conn2, _, _, _ := ws.DefaultDialer.Dial(ctx, "ws://127.0.0.1:1333")
+	conn2, _, _ := websocket.DefaultDialer.Dial("ws://127.0.0.1:1333", nil)
 	conn2.Close()
 
 	err = server.Shutdown()

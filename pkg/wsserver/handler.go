@@ -7,15 +7,15 @@ import (
 type HandleFunc func(*Context) error
 type ConnBuildHandleFunc func(*Context)
 type ConnCloseHandleFunc func(*Context) error
-type ErrHandleFunc func(err error)
+type ErrHandleFunc func(c *Context, err error)
 
 // EchoHandle ...
 func EchoHandle(c *Context) error {
 	data := c.GetPayload()
-	return c.Write(data)
+	return c.WriteText(data)
 }
 
-func ErrHandle(err error) {
+func ErrHandle(c *Context, err error) {
 	log.Error().Err(err).Msg("ws: handle unexpected error")
 }
 
