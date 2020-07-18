@@ -52,7 +52,7 @@ func (s *wsSuite) setupServer(handler wshandler.Handler) {
 		log.Error().Stack().Err(err).Msg("read message failed")
 
 	}
-	s.server.ConnBuildHandleFunc = wsserver.ConnBuildHandle
+	s.server.ConnBuildHandler = wsserver.ConnBuildHandle
 	s.server.ConnCloseHandler = func(c *wsserver.Context) error {
 		log.Debug().Msg("conn closed")
 		c.Close()

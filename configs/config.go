@@ -18,8 +18,17 @@ var _config Configuration
 
 // Configuration represent app configuration
 type Configuration struct {
+	WsServer struct {
+		Addr string `yaml:"addr"`
+		Port string `yaml:"port"`
+	} `yaml:"ws_server"`
+
 	Log  zlogging.Config `yaml:"log"`
 	Nats natspool.Config `yaml:"nats"`
+}
+
+func (c Configuration) PrvoideLog() zlogging.Config {
+	return c.Log
 }
 
 // Empty check if configuration is empty

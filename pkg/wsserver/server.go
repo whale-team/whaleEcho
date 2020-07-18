@@ -23,17 +23,17 @@ func New() *SocketServer {
 }
 
 type SocketServer struct {
-	poller              netpoll.Poller
-	Addr                string
-	Port                string
-	ln                  net.Listener
-	Handler             HandleFunc
-	ErrHandler          ErrHandleFunc
-	ConnCloseHandler    ConnCloseHandleFunc
-	ConnBuildHandleFunc ConnBuildHandleFunc
-	handleConn          connHandleFunc
-	wg                  *sync.WaitGroup
-	quitSingal          chan struct{}
+	poller           netpoll.Poller
+	Addr             string
+	Port             string
+	ln               net.Listener
+	Handler          HandleFunc
+	ErrHandler       ErrHandleFunc
+	ConnCloseHandler ConnCloseHandleFunc
+	ConnBuildHandler ConnBuildHandleFunc
+	handleConn       connHandleFunc
+	wg               *sync.WaitGroup
+	quitSingal       chan struct{}
 }
 
 func (serv *SocketServer) resolvedAddr() string {
@@ -54,7 +54,18 @@ func (serv *SocketServer) ListenAndServe(addr, port string) error {
 		return err
 	}
 	serv.ln = &onceCloseListener{Listener: ln}
-	log.Info().Msgf("ws: Listening and serving Websocket Server on %s\n", addr+":"+port)
+	log.Info().Msgf("ws: Listening and serving Websocket Server on %s\n", serv.resolvedAddr())
+	serv.Serve()
+	return nil
+}
+
+func (serv *SocketServer) Start() error {
+	ln, err := net.Listen("tcp", serv.resolvedAddr())
+	if err != nil {
+		return err
+	}
+	serv.ln = &onceCloseListener{Listener: ln}
+	log.Info().Msgf("ws: Listening and serving Websocket Server on %s\n", serv.resolvedAddr())
 	serv.Serve()
 	return nil
 }
@@ -87,7 +98,7 @@ func (serv *SocketServer) upgradeToWS(conn net.Conn) error {
 		Context:   ctx,
 		ctxCancel: cancel,
 	}
-	serv.ConnBuildHandleFunc(c)
+	serv.ConnBuildHandler(c)
 	serv.wg.Add(1)
 	serv.registerNetpoll(c, onceConn.Conn)
 	return nil

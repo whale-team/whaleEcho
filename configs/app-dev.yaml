@@ -9,3 +9,6 @@ nats:
   reconn_delay: 600
   pool_size: 30
   conn_timeout: 3
+ws_server:
+  addr: "127.0.0.1"
+  port: "10033"
