@@ -52,6 +52,7 @@ start.containers: $(PRJ_PATH)/deployments/docker/docker-compose.yaml
 
 teardown.containers: $(PRJ_PATH)/deployments/docker/docker-compose.yaml
 	docker-compose -p $(PRJ_NAME) -f $(PRJ_PATH)/deployments/docker/docker-compose.yaml down
+	docker container prune --force
 
 push.repo:
 	git push origin HEAD
