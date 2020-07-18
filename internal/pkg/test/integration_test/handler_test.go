@@ -10,6 +10,7 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/vicxu416/goinfra/zlogging"
 	"github.com/whale-team/whaleEcho/configs"
 	"github.com/whale-team/whaleEcho/internal/pkg/app/delivery/wshandler"
 	"github.com/whale-team/whaleEcho/internal/pkg/app/msgbroker/natsbroker"
@@ -50,6 +51,8 @@ func setupSuite() error {
 	if err != nil {
 		return err
 	}
+
+	zlogging.SetupLogger(config.Log)
 
 	handler := wshandler.Handler{}
 

@@ -9,7 +9,7 @@ GORUN=$(GOCMD) run
 GOTEST=$(GOCMD) test -v
 GOMOD=$(GOCMD) mod
 TESTPATH=$(PRJ_PATH)/internal/pkg/test
-IMAGE_TAG=$(latest)
+IMAGE_TAG=latest
 
 configs.app.yaml: configs/app-dev.yaml
 	cp configs/app-dev.yaml configs/app.yaml 
@@ -52,3 +52,12 @@ start.containers: $(PRJ_PATH)/deployments/docker/docker-compose.yaml
 
 teardown.containers: $(PRJ_PATH)/deployments/docker/docker-compose.yaml
 	docker-compose -p $(PRJ_NAME) -f $(PRJ_PATH)/deployments/docker/docker-compose.yaml down
+
+push.repo:
+	git push origin HEAD
+
+
+ci: test.all push.repo build.image push.image
+# cd: 
+
+# cicd: ci cd
