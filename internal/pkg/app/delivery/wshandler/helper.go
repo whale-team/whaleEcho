@@ -1,0 +1,21 @@
+package wshandler
+
+import (
+	"github.com/whale-team/whaleEcho/pkg/echoproto"
+	"github.com/whale-team/whaleEcho/pkg/wsserver"
+	"google.golang.org/protobuf/proto"
+)
+
+func ReplyResponse(c *wsserver.Context, status echoproto.Status, messages ...string) error {
+	resp := &echoproto.Message{
+		Status:   status,
+		Messages: messages,
+		Type:     echoproto.MessageType_Response,
+	}
+
+	data, err := proto.Marshal(resp)
+	if err != nil {
+		return err
+	}
+	return c.WriteBinary(data)
+}
