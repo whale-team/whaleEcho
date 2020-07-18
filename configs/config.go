@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+
 	"github.com/whale-team/whaleEcho/pkg/natspool"
 
 	"github.com/mitchellh/mapstructure"
@@ -38,7 +39,7 @@ func InitConfiguration() (Configuration, error) {
 	if configPath == "" {
 		_, f, _, _ := runtime.Caller(0)
 		basepath := filepath.Dir(f)
-		configPath = filepath.Join(basepath, "../deploy/config")
+		configPath = filepath.Join(basepath, "/")
 	}
 
 	configName := viper.GetString("CONFIG_NAME")
