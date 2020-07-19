@@ -61,7 +61,7 @@ push.repo:
 	git push origin HEAD
 
 
-ci: go.lint test.all push.repo build.image push.image
+ci: go.lint build test.all push.repo build.image push.image
 # cd: 
 
 # cicd: ci cd

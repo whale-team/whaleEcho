@@ -17,7 +17,7 @@ type MockReceiver struct {
 	mock.Mock
 }
 
-func (r *MockReceiver) Receive(msg *entity.Message) error {
+func (r *MockReceiver) Receive(msg entity.MsgData) error {
 	args := r.Called(msg)
 	return args.Error(0)
 }
@@ -45,13 +45,10 @@ func (m *MockSub) IsValid() bool {
 
 var _ = Describe("Room Entity", func() {
 
-	closedMsg := &entity.Message{Msg: &nats.Msg{Data: []byte("closed")}}
-
 	Describe("#Run", func() {
 		room := entity.NewRoom()
 		sub := &MockSub{}
 		room.Subscribe = sub
-		room.SetClosedMsg(closedMsg)
 
 		Context("HappyCase", func() {
 			ch := make(chan *nats.Msg, 1)
@@ -75,7 +72,7 @@ var _ = Describe("Room Entity", func() {
 			})
 
 			It("should close after notifing closed message", func() {
-				mock.On("Receive", closedMsg).Return(nil)
+				mock.On("Receive", entity.RoomCloseMessage).Return(nil)
 				sub.On("Unsubscribe").Return(nil)
 				room.Close()
 				mock.AssertExpectations(GinkgoT())
@@ -89,7 +86,6 @@ var _ = Describe("Room Entity", func() {
 		sub := &MockSub{}
 		room.Subscribe = sub
 		testMsg := &nats.Msg{Data: []byte("testing")}
-		room.SetClosedMsg(closedMsg)
 
 		Context("HappyCase", func() {
 			ch := make(chan *nats.Msg, 1)
