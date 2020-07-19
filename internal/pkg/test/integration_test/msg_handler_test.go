@@ -121,8 +121,6 @@ var _ = Describe("Room Handler", func() {
 				sentData = AssertSendMessage(suite.messages[0], room, &command, conn2)
 
 				By("Rec message")
-
-				// conn2.SetReadDeadline(time.Now().Add(1 * time.Second))
 				_, recData, err := conn2.ReadMessage()
 				assert.Nil(suite.T, err)
 				assert.Equal(suite.T, sentData, recData)

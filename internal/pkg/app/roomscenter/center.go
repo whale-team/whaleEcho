@@ -66,16 +66,17 @@ func (center *Center) listen() {
 		case msg := <-center.openCh:
 			room := entity.NewRoom()
 			if err := center.asyncHandler.OpenRoom(center.ctx, msg, room); err != nil {
-				center.asyncHandler.ErrHandle(err, msg)
+				center.asyncHandler.ErrHandle(err, msg, room)
 			}
 			center.AddRoom(room)
 		case msg := <-center.closeCh:
-			roomUID, err := center.asyncHandler.CloseRoom(center.ctx, msg)
+			room := &entity.Room{}
+			err := center.asyncHandler.CloseRoom(center.ctx, msg, room)
 			if err != nil {
-				center.asyncHandler.ErrHandle(err, msg)
+				center.asyncHandler.ErrHandle(err, msg, room)
 				continue
 			}
-			center.RemoveRoom(roomUID)
+			center.RemoveRoom(room.UID)
 		case <-center.ctx.Done():
 			break
 		}

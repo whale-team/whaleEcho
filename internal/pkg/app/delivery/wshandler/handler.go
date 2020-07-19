@@ -6,7 +6,9 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/whale-team/whaleEcho/internal/pkg/app/service"
+	"github.com/whale-team/whaleEcho/pkg/bytescronv"
 	"github.com/whale-team/whaleEcho/pkg/echoproto"
+	"github.com/whale-team/whaleEcho/pkg/wserrors"
 	"github.com/whale-team/whaleEcho/pkg/wsserver"
 	"google.golang.org/protobuf/proto"
 )
@@ -39,14 +41,15 @@ func (h Handler) Handle(c *wsserver.Context) error {
 	command := &echoproto.Command{}
 
 	if err := proto.Unmarshal(c.GetPayload(), command); err != nil {
-		return err
+		return wserrors.Wrapf(wserrors.ErrInputInvalid, "handler: unmarshal client command failed, err:%+v. payload:%s",
+			err, bytescronv.BytesToString(c.GetPayload()))
 	}
 
 	ctx := c.Context
 	c.Context = context.WithValue(ctx, CoomandKey{}, command)
 
 	log.Logger = log.With().Fields(map[string]interface{}{
-		"command":       CommandTypeMap[command.Type],
+		"command": CommandTypeMap[command.Type],
 	}).Logger()
 
 	log.Info().Str("started_at", time.Now().Format(time.RFC3339Nano)).Msg("access log: started")

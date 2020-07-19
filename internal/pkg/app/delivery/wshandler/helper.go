@@ -2,6 +2,7 @@ package wshandler
 
 import (
 	"github.com/whale-team/whaleEcho/pkg/echoproto"
+	"github.com/whale-team/whaleEcho/pkg/wserrors"
 	"github.com/whale-team/whaleEcho/pkg/wsserver"
 	"google.golang.org/protobuf/proto"
 )
@@ -15,7 +16,7 @@ func ReplyResponse(c *wsserver.Context, status echoproto.Status, messages ...str
 
 	data, err := proto.Marshal(resp)
 	if err != nil {
-		return err
+		return wserrors.Wrapf(wserrors.ErrInternal, "handler: ReplyResponse marshal response failed, err:%+v, response:%+v", err, resp)
 	}
 	return c.WriteBinary(data)
 }

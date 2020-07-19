@@ -26,14 +26,14 @@ func (h *MockHandler) OpenRoom(ctx context.Context, msg *nats.Msg, room *entity.
 	return err
 }
 
-func (h *MockHandler) CloseRoom(ctx context.Context, msg *nats.Msg) (string, error) {
-	uid, err := h.handler.CloseRoom(ctx, msg)
+func (h *MockHandler) CloseRoom(ctx context.Context, msg *nats.Msg, room *entity.Room) error {
+	err := h.handler.CloseRoom(ctx, msg, room)
 	h.Called(msg.Data)
-	return uid, err
+	return err
 }
 
-func (h *MockHandler) ErrHandle(err error, msg *nats.Msg) {
-	h.handler.ErrHandle(err, msg)
+func (h *MockHandler) ErrHandle(err error, msg *nats.Msg, room *entity.Room) {
+	h.handler.ErrHandle(err, msg, room)
 	h.Called()
 }
 

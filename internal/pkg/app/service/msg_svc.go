@@ -5,11 +5,17 @@ import (
 
 	"github.com/rs/zerolog/log"
 	"github.com/whale-team/whaleEcho/internal/pkg/app/entity"
+	"github.com/whale-team/whaleEcho/pkg/natspool"
+	"github.com/whale-team/whaleEcho/pkg/wserrors"
 )
 
 func (svc service) PublishText(ctx context.Context, msg *entity.Message) error {
 	if err := svc.msgBroker.PublishMessage(ctx, msg.Subject(), msg.ToMsgData()); err != nil {
-		return err
+		if wserrors.Is(err, natspool.ErrGetConnTimeout) {
+			return wserrors.Wrapf(wserrors.ErrSysBusy, "svc: PublishMessage msgbroker get connection timeout")
+		}
+
+		return wserrors.Wrapf(wserrors.ErrInternal, "svc: PublishMessage failed, err:%+v, subject:%s msg:%+v", err, msg.Subject(), msg)
 	}
 	return nil
 }
@@ -26,7 +32,7 @@ func (svc service) JoinRoom(ctx context.Context, roomUID string, user *entity.Us
 	}
 
 	if err := svc.rooms.JoinRoom(roomUID, user); err != nil {
-		return err
+		return wserrors.Wrapf(wserrors.ErrInternal, "svc: JoinRoom failed, err:%+v, roomUID:%s user:%+v", err, roomUID, user)
 	}
 	return nil
 }
