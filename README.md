@@ -5,22 +5,30 @@ WhaleEcho is websocket server for handling websocket connection in whale.
 
 ## Installation
 
+**note: environment setup require docker engine**
+
 1. Use the go module to get install this project
 
 ```bash
-go get github.com/whale-team/whaleEcho
+git clone https://github.com/whale-team/whaleEcho.git && cd ./whaleEcho
 ```
 
 2. Setup Environment
 
 ```bash
-make env.setup
+make setup.env
 ```
 
 3. Run the test
 
 ```bash
-make run.test.all
+make test.all
+```
+
+4. run websocket server locally
+
+``` bash
+make run.ws
 ```
 
 ### System Design

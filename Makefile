@@ -60,6 +60,8 @@ teardown.containers: $(PRJ_PATH)/deployments/docker/docker-compose.yaml
 push.repo:
 	git push origin HEAD
 
+setup.env:
+	. $(PRJ_PATH)/scripts/setup.sh
 
 ci: go.lint build test.all push.repo build.image push.image
 # cd: 
