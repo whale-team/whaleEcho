@@ -13,12 +13,14 @@ func newContainer() *roomsContainer {
 	}
 }
 
+// roomsContainer represent contaienr to contain runtime rooms
 type roomsContainer struct {
 	rooms map[string]*entity.Room
 	mu    sync.RWMutex
 	wg    *sync.WaitGroup
 }
 
+// AddRoom add new room to container, meanwhile run the room in runtime
 func (con *roomsContainer) AddRoom(room *entity.Room) error {
 	con.mu.Lock()
 	defer con.mu.Unlock()
@@ -32,6 +34,7 @@ func (con *roomsContainer) AddRoom(room *entity.Room) error {
 	return nil
 }
 
+// JoinRoom add participant to specific room
 func (con *roomsContainer) JoinRoom(roomUID string, p entity.Participant) error {
 	con.mu.RLock()
 	defer con.mu.RUnlock()
@@ -44,6 +47,7 @@ func (con *roomsContainer) JoinRoom(roomUID string, p entity.Participant) error 
 	return nil
 }
 
+// HasRoom check if room exist
 func (con *roomsContainer) HasRoom(roomUID string) bool {
 	con.mu.RLock()
 	defer con.mu.RUnlock()
@@ -51,6 +55,7 @@ func (con *roomsContainer) HasRoom(roomUID string) bool {
 	return ok
 }
 
+// Size return room size
 func (con *roomsContainer) Size() int64 {
 	con.mu.RLock()
 	defer con.mu.RUnlock()
@@ -58,6 +63,7 @@ func (con *roomsContainer) Size() int64 {
 	return int64(len(con.rooms))
 }
 
+// RemoveRoom remove room from container, it expect this room is closed
 func (con *roomsContainer) RemoveRoom(roomUID string) error {
 	con.mu.Lock()
 	defer con.mu.Unlock()
@@ -72,6 +78,7 @@ func (con *roomsContainer) RemoveRoom(roomUID string) error {
 	return nil
 }
 
+// LeaveRoom remove participant from a specific room
 func (con *roomsContainer) LeaveRoom(roomUID string, p entity.Participant) {
 	con.mu.RLock()
 	defer con.mu.RUnlock()

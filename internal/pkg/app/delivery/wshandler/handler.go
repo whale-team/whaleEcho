@@ -13,17 +13,19 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// CoomandKey represent context key for storing command struct
 type CoomandKey struct{}
 
 type routeMap map[echoproto.CommandType]handleFunc
 type handleFunc func(c *wsserver.Context, payload []byte) error
 
-var CommandTypeMap = map[echoproto.CommandType]string{
+var commandTypeMap = map[echoproto.CommandType]string{
 	echoproto.CommandType_JoinRoom:    "join_room",
 	echoproto.CommandType_LeaveRoom:   "leave_room",
 	echoproto.CommandType_SendMessage: "send_message",
 }
 
+// New construct a Handler
 func New(svc service.Servicer) Handler {
 	handler := Handler{
 		svc: svc,
@@ -32,11 +34,13 @@ func New(svc service.Servicer) Handler {
 	return handler
 }
 
+// Handler represent handler layer for unmarshaling protobuf, routing websocket command to servicer
 type Handler struct {
 	svc      service.Servicer
 	routeMap routeMap
 }
 
+// Handle method used to unmarshal protobuf, log enter, leave message, and route to handlerFunc
 func (h Handler) Handle(c *wsserver.Context) error {
 	command := &echoproto.Command{}
 
@@ -49,7 +53,7 @@ func (h Handler) Handle(c *wsserver.Context) error {
 	c.Context = context.WithValue(ctx, CoomandKey{}, command)
 
 	log.Logger = log.With().Fields(map[string]interface{}{
-		"command": CommandTypeMap[command.Type],
+		"command": commandTypeMap[command.Type],
 	}).Logger()
 
 	log.Info().Str("started_at", time.Now().Format(time.RFC3339Nano)).Msg("access log: started")
@@ -59,6 +63,7 @@ func (h Handler) Handle(c *wsserver.Context) error {
 	return err
 }
 
+// GetCommand method used to get Command struct from context
 func (Handler) GetCommand(ctx context.Context) *echoproto.Command {
 	command := ctx.Value(CoomandKey{}).(*echoproto.Command)
 	return command

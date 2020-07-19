@@ -9,6 +9,7 @@ import (
 	"github.com/whale-team/whaleEcho/pkg/wsserver"
 )
 
+// SendMessage handlefunc used to send message to room
 func (h Handler) SendMessage(c *wsserver.Context, payload []byte) error {
 	msg := &entity.Message{}
 
@@ -23,6 +24,7 @@ func (h Handler) SendMessage(c *wsserver.Context, payload []byte) error {
 	return ReplyResponse(c, echoproto.Status_OK)
 }
 
+// JoinRoom handlefunc used to bind client connection with a specific room
 func (h Handler) JoinRoom(c *wsserver.Context, payload []byte) error {
 	room := &entity.Room{}
 	user := &entity.User{}
@@ -39,6 +41,7 @@ func (h Handler) JoinRoom(c *wsserver.Context, payload []byte) error {
 	return ReplyResponse(c, echoproto.Status_OK)
 }
 
+// LeaveRoom handlefunc used to unbind client connection, it expect client will close connection laster
 func (h Handler) LeaveRoom(c *wsserver.Context, payload []byte) error {
 	room := &entity.Room{}
 	user := &entity.User{}

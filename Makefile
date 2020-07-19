@@ -29,6 +29,9 @@ go.proto:
 	protoc -I $(PRJ_PATH)/pkg/echoproto -I $(PRJ_PATH)/vendor  --go_out=$(PRJ_PATH)/pkg/echoproto \
 	--go_opt=paths=source_relative $(PRJ_PATH)/pkg/echoproto/*.proto
 
+go.lint:
+	golint $(PRJ_PATH)/internal/pkg/app/...
+
 test:
 	$(GOTEST) $(TESTPATH)/$(test)_test -count=1
 
@@ -58,7 +61,7 @@ push.repo:
 	git push origin HEAD
 
 
-ci: test.all push.repo build.image push.image
+ci: go.lint test.all push.repo build.image push.image
 # cd: 
 
 # cicd: ci cd

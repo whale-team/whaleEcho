@@ -14,6 +14,7 @@ var once = sync.Once{}
 
 var center *Center
 
+// Center represent rooms center to manage all runtime rooms
 type Center struct {
 	*roomsContainer
 	openCh       chan *nats.Msg
@@ -48,14 +49,18 @@ func New(broker msgbroker.MsgBroker) (*Center, error) {
 	return center, nil
 }
 
+// SetAsyncHandler setup an async handler
 func (center *Center) SetAsyncHandler(handler AsyncHandler) {
 	center.asyncHandler = handler
 }
 
+// Start start rooms center
+//  Rooms Center will listen open room and close room event from nats
 func (center *Center) Start() {
 	go center.listen()
 }
 
+// Shutdown shutdown the rooms
 func (center *Center) Shutdown() {
 	center.ctxCancel()
 }

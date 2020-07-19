@@ -7,6 +7,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// UnmarshalRoom funcion unmarshal room
 func UnmarshalRoom(data []byte, room *entity.Room) error {
 	protoRoom := echoproto.Room{}
 	if err := proto.Unmarshal(data, &protoRoom); err != nil {
@@ -18,6 +19,7 @@ func UnmarshalRoom(data []byte, room *entity.Room) error {
 	return nil
 }
 
+// UnmarshalRoomAndUser function unmarshal room and user
 func UnmarshalRoomAndUser(data []byte, room *entity.Room, user *entity.User) error {
 	protoRoom := echoproto.Room{}
 	if err := proto.Unmarshal(data, &protoRoom); err != nil {
@@ -32,6 +34,7 @@ func UnmarshalRoomAndUser(data []byte, room *entity.Room, user *entity.User) err
 	return nil
 }
 
+// UnmarshalMessage function unmarshal function
 func UnmarshalMessage(data []byte, msg *entity.Message) error {
 	protoMsg := echoproto.Message{}
 	if err := proto.Unmarshal(data, &protoMsg); err != nil {

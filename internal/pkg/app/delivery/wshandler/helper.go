@@ -7,6 +7,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// ReplyResponse function used to reply response message to websocket client
 func ReplyResponse(c *wsserver.Context, status echoproto.Status, messages ...string) error {
 	resp := &echoproto.Message{
 		Status:   status,

@@ -2,6 +2,7 @@ package wshandler
 
 import "github.com/whale-team/whaleEcho/pkg/echoproto"
 
+// SetupRoutes method used to setup routes map
 func (h *Handler) SetupRoutes() {
 	routeMap := make(map[echoproto.CommandType]handleFunc)
 

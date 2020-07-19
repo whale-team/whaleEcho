@@ -12,22 +12,26 @@ import (
 	"github.com/whale-team/whaleEcho/pkg/wserrors"
 )
 
+// AsyncHandler provide async handler function that used to handle nats event
 type AsyncHandler interface {
 	ErrHandle(error, *nats.Msg, *entity.Room)
 	OpenRoom(context.Context, *nats.Msg, *entity.Room) error
 	CloseRoom(context.Context, *nats.Msg, *entity.Room) error
 }
 
+// NewDefaultHandler construct default async handler
 func NewDefaultHandler(broker msgbroker.MsgBroker) AsyncHandler {
 	return &DefaultHandler{
 		broker: broker,
 	}
 }
 
+// DefaultHandler represent default async handler
 type DefaultHandler struct {
 	broker msgbroker.MsgBroker
 }
 
+// OpenRoom method used to create a new room
 func (h DefaultHandler) OpenRoom(ctx context.Context, msg *nats.Msg, room *entity.Room) error {
 	err := mapper.UnmarshalRoom(msg.Data, room)
 	if err != nil {
@@ -51,6 +55,7 @@ func (h DefaultHandler) OpenRoom(ctx context.Context, msg *nats.Msg, room *entit
 	return nil
 }
 
+// CloseRoom method used to close a room
 func (h DefaultHandler) CloseRoom(ctx context.Context, msg *nats.Msg, room *entity.Room) error {
 	err := mapper.UnmarshalRoom(msg.Data, room)
 	if err != nil {
@@ -59,6 +64,7 @@ func (h DefaultHandler) CloseRoom(ctx context.Context, msg *nats.Msg, room *enti
 	return nil
 }
 
+// ErrHandle handle async method error
 func (h DefaultHandler) ErrHandle(err error, msg *nats.Msg, room *entity.Room) {
 	if wserrors.Is(wserrors.Cause(err), ErrOpenRoom) {
 		log.Error().Err(err).Msgf("roomsCenter: open room failed, room:%+v", room)

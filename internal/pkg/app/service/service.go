@@ -8,6 +8,7 @@ import (
 	"github.com/whale-team/whaleEcho/internal/pkg/app/roomscenter"
 )
 
+// New construct a message servicer
 func New(broker msgbroker.MsgBroker, rooms *roomscenter.Center) Servicer {
 	return &service{
 		msgBroker: broker,
@@ -20,7 +21,7 @@ type service struct {
 	rooms     *roomscenter.Center
 }
 
-// Servicer service facade interface
+// Servicer provide message servicer interface
 type Servicer interface {
 	JoinRoom(ctx context.Context, roomUID string, user *entity.User) error
 	PublishText(ctx context.Context, msg *entity.Message) error

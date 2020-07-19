@@ -14,6 +14,7 @@ import (
 	"go.uber.org/fx"
 )
 
+// SetupWsServer helper
 func SetupWsServer(config configs.Configuration, handler wshandler.Handler) *wsserver.SocketServer {
 	server := wsserver.New()
 	server.Addr = config.WsServer.Addr
@@ -26,6 +27,7 @@ func SetupWsServer(config configs.Configuration, handler wshandler.Handler) *wss
 	return server
 }
 
+// StartWsServer hook
 func StartWsServer(config configs.Configuration, handler wshandler.Handler, lc fx.Lifecycle) (*wsserver.SocketServer, error) {
 	server := SetupWsServer(config, handler)
 
@@ -53,6 +55,7 @@ func StartWsServer(config configs.Configuration, handler wshandler.Handler, lc f
 	return server, nil
 }
 
+// StartRoomsCenter hook
 func StartRoomsCenter(broker msgbroker.MsgBroker, lc fx.Lifecycle) (*roomscenter.Center, error) {
 	center, err := roomscenter.New(broker)
 	if err != nil {
@@ -69,6 +72,7 @@ func StartRoomsCenter(broker msgbroker.MsgBroker, lc fx.Lifecycle) (*roomscenter
 	return center, nil
 }
 
+// StartNatsClient hook
 func StartNatsClient(config natspool.Config, lc fx.Lifecycle) (natspool.Client, error) {
 	client, err := natspool.NewClient(config)
 	if err != nil {
