@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option go_package = "github.com/whale-team/whaleEcho/pkg/echoproto";
+import "enum.proto";
+
+message Command {
+  CommandType type = 1;
+  bytes payload = 2;
+}
+
+message User {
+  int64 id = 1;
+  string uid = 2;
+  string name = 3;
+}
+
+message Room {
+  int64 id = 1;
+  string uid = 2;
+  string name = 3;
+  int64 creator_id = 4;
+  string creator_name = 5;
+  int64 participants_limit = 6;
+  int64 live_duration = 7;
+  User participant = 8;
+}
+
+message Message {
+  string uid  = 1;
+  User sender = 2;
+  Room room = 3;
+  string text = 4;
+  bytes file = 5;
+  string file_type = 6;
+  MessageType type = 7;
+  int64 sent_at = 8;
+  Status status = 9;
+  repeated string messages = 10;
+}

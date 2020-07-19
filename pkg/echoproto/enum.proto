@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+option go_package = "github.com/whale-team/whaleEcho/pkg/echoproto";
+
+enum MessageType {
+  _MessageNone = 0;
+
+  Text = 1;
+  File = 2;
+  Response = 3;
+}
+
+enum Status {
+  _StatusNone = 0;
+
+  OK = 1;
+  NotAllow = 2;
+
+  NotAuth = 3;
+
+  ErrNotFound = 4;
+  ErrBusy = 5;
+  ErrUnKnown = 6;
+  ErrInputInvalid = 7;
+}
+
+enum CommandType {
+  _CommandNone = 0;
+
+  JoinRoom = 1;
+  SendMessage = 2;
+  LeaveRoom = 3;
+}

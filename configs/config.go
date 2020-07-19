@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+
 	"github.com/whale-team/whaleEcho/pkg/natspool"
 
 	"github.com/mitchellh/mapstructure"
@@ -17,8 +18,17 @@ var _config Configuration
 
 // Configuration represent app configuration
 type Configuration struct {
+	WsServer struct {
+		Addr string `yaml:"addr"`
+		Port string `yaml:"port"`
+	} `yaml:"ws_server"`
+
 	Log  zlogging.Config `yaml:"log"`
 	Nats natspool.Config `yaml:"nats"`
+}
+
+func (c Configuration) PrvoideLog() zlogging.Config {
+	return c.Log
 }
 
 // Empty check if configuration is empty
@@ -38,7 +48,7 @@ func InitConfiguration() (Configuration, error) {
 	if configPath == "" {
 		_, f, _, _ := runtime.Caller(0)
 		basepath := filepath.Dir(f)
-		configPath = filepath.Join(basepath, "../deploy/config")
+		configPath = filepath.Join(basepath, "/")
 	}
 
 	configName := viper.GetString("CONFIG_NAME")

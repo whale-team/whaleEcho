@@ -1,0 +1,14 @@
+log:
+  local: true
+  level: debug
+  app_id: whale-echo
+  env: test
+nats:
+  addr: 127.0.0.1:4222
+  reconn_wait: 1
+  reconn_delay: 600
+  pool_size: 30
+  conn_timeout: 3
+ws_server:
+  addr: 127.0.0.1
+  port: 10033
