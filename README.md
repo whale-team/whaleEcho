@@ -1,6 +1,5 @@
 # WhaleEcho
 
----
 WhaleEcho is websocket server for handling websocket connection in whale.
 
 ## Table of Content
