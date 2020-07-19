@@ -3,9 +3,19 @@
 ---
 WhaleEcho is websocket server for handling websocket connection in whale.
 
+## Table of Content
+1. **[Installation](#installation)**
+2. **[System Design](#system-design)**
+
+
 ## Installation
 
-**note: environment setup require docker engine**
+#### Requirements:
+
+- docker engine
+- go 1.14+
+
+#### Setup Steps:
 
 1. Use the go module to get install this project
 
@@ -31,8 +41,8 @@ make test.all
 make run.ws
 ```
 
-### System Design
 
+## System Design
 #### System Flow  
 
 ![flow chart](./docs/uml/flowchart.drawio.svg)
