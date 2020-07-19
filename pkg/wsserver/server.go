@@ -129,10 +129,12 @@ func (serv *SocketServer) registerNetpoll(c *Context, conn net.Conn) {
 
 func (serv *SocketServer) handleCloseErr(err error, c *Context) error {
 	if _, ok := err.(wsutil.ClosedError); ok {
-		return serv.ConnCloseHandler(c)
+		serv.ConnCloseHandler(c)
+		return nil
 	}
 	if err.Error() == io.EOF.Error() {
-		return serv.ConnCloseHandler(c)
+		serv.ConnCloseHandler(c)
+		return nil
 	}
 	return err
 }

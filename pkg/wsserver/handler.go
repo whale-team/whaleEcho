@@ -6,7 +6,7 @@ import (
 
 type HandleFunc func(*Context) error
 type ConnBuildHandleFunc func(*Context)
-type ConnCloseHandleFunc func(*Context) error
+type ConnCloseHandleFunc func(*Context)
 type ErrHandleFunc func(c *Context, err error)
 
 // EchoHandle ...

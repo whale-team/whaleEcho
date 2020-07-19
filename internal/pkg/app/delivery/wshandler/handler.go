@@ -2,6 +2,7 @@ package wshandler
 
 import (
 	"context"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"github.com/whale-team/whaleEcho/internal/pkg/app/service"
@@ -14,6 +15,12 @@ type CoomandKey struct{}
 
 type routeMap map[echoproto.CommandType]handleFunc
 type handleFunc func(c *wsserver.Context, payload []byte) error
+
+var CommandTypeMap = map[echoproto.CommandType]string{
+	echoproto.CommandType_JoinRoom:    "join_room",
+	echoproto.CommandType_LeaveRoom:   "leave_room",
+	echoproto.CommandType_SendMessage: "send_message",
+}
 
 func New(svc service.Servicer) Handler {
 	handler := Handler{
@@ -38,10 +45,15 @@ func (h Handler) Handle(c *wsserver.Context) error {
 	ctx := c.Context
 	c.Context = context.WithValue(ctx, CoomandKey{}, command)
 
-	log.Debug().Msgf("command: %+v", command)
+	log.Logger = log.With().Fields(map[string]interface{}{
+		"command":       CommandTypeMap[command.Type],
+	}).Logger()
 
+	log.Info().Str("started_at", time.Now().Format(time.RFC3339Nano)).Msg("access log: started")
 	handleFunc := h.routeMap[command.Type]
-	return handleFunc(c, command.Payload)
+	err := handleFunc(c, command.Payload)
+	log.Info().Str("finished_at", time.Now().Format(time.RFC3339Nano)).Msg("access log: finished")
+	return err
 }
 
 func (Handler) GetCommand(ctx context.Context) *echoproto.Command {

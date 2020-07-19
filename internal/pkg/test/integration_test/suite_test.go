@@ -12,6 +12,7 @@ import (
 	"github.com/whale-team/whaleEcho/internal/pkg/app/msgbroker"
 	"github.com/whale-team/whaleEcho/internal/pkg/app/roomscenter"
 	"github.com/whale-team/whaleEcho/pkg/echoproto"
+	"github.com/whale-team/whaleEcho/pkg/middleware"
 	"github.com/whale-team/whaleEcho/pkg/wsserver"
 	"google.golang.org/protobuf/proto"
 )
@@ -52,12 +53,8 @@ func (s *wsSuite) setupServer(handler wshandler.Handler) {
 		log.Error().Stack().Err(err).Msg("read message failed")
 
 	}
-	s.server.ConnBuildHandler = wsserver.ConnBuildHandle
-	s.server.ConnCloseHandler = func(c *wsserver.Context) error {
-		log.Debug().Msg("conn closed")
-		c.Close()
-		return nil
-	}
+	s.server.ConnBuildHandler = middleware.WsConnBuildHandle
+	s.server.ConnCloseHandler = middleware.WsConnCloseHandle
 }
 
 func (s *wsSuite) initData() error {
