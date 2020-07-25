@@ -18,6 +18,10 @@ run.ws:
 	@export ENV=$(ENV)
 	$(GORUN) main.go ws
 
+run.client:
+	$(GORUN) main.go client
+
+
 build: main.go
 	$(GOBUILD) -o $(PRJ_NAME) main.go
 
@@ -64,6 +68,9 @@ setup.env:
 	. $(PRJ_PATH)/scripts/setup.sh
 
 ci: go.lint build test.all push.repo build.image push.image
+
+build.nats:
+	docker run -d --name nats -p 4222:4222 -p 6222:6222 -p 8222:8222 nats 
 # cd: 
 
 # cicd: ci cd
