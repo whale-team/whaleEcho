@@ -32,6 +32,7 @@ type SocketServer struct {
 	ConnCloseHandler ConnCloseHandleFunc
 	ConnBuildHandler ConnBuildHandleFunc
 	handleConn       connHandleFunc
+	Recovery         Recovery
 	wg               *sync.WaitGroup
 	quitSingal       chan struct{}
 }
@@ -82,7 +83,9 @@ func (serv *SocketServer) Serve() {
 				continue
 			}
 		}
-		serv.upgradeToWS(conn)
+		if err := serv.upgradeToWS(conn); err != nil {
+			log.Error().Err(err).Msg("ws: upgrade connection to websocket failed")
+		}
 	}
 }
 
@@ -114,6 +117,8 @@ func (serv *SocketServer) registerNetpoll(c *Context, conn net.Conn) {
 			return
 		}
 		go func() {
+			defer serv.Recovery(c)
+
 			if err := c.read(); err != nil {
 				if err := serv.handleCloseErr(err, c); err != nil {
 					serv.ErrHandler(c, err)
@@ -129,16 +134,17 @@ func (serv *SocketServer) registerNetpoll(c *Context, conn net.Conn) {
 
 func (serv *SocketServer) handleCloseErr(err error, c *Context) error {
 	if _, ok := err.(wsutil.ClosedError); ok {
-		serv.ConnCloseHandler(c)
+		// serv.ConnCloseHandler(c)
 		return nil
 	}
 	if err.Error() == io.EOF.Error() {
-		serv.ConnCloseHandler(c)
+		// serv.ConnCloseHandler(c)
 		return nil
 	}
 	return err
 }
 
+// Shutdown graceful shutdown websocket server until all connection is closed
 func (serv *SocketServer) Shutdown() error {
 	serv.wg.Wait()
 	close(serv.quitSingal)

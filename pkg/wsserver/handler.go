@@ -8,6 +8,7 @@ type HandleFunc func(*Context) error
 type ConnBuildHandleFunc func(*Context)
 type ConnCloseHandleFunc func(*Context)
 type ErrHandleFunc func(c *Context, err error)
+type Recovery func(c *Context)
 
 // EchoHandle ...
 func EchoHandle(c *Context) error {
