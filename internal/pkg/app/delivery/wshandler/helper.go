@@ -33,6 +33,7 @@ func AttachUserID(ctx context.Context, userID int64) context.Context {
 	return ctx
 }
 
+// GetUserID get user id from context
 func GetUserID(ctx context.Context) int64 {
 	val := ctx.Value(UserIDKey{})
 	id, ok := val.(int64)
