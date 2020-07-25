@@ -42,9 +42,7 @@ make run.ws
 
 
 ## System Design
-#### System Flow  
+#### System Structure Diagram  
 
-![flow chart](./docs/uml/flowchart.drawio.svg)
-
-#### Component Diagram
+![system structure chart](./docs/uml/sys_structure.drawio.svg)
 
