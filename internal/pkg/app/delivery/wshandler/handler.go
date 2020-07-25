@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/rs/zerolog/log"
+	"github.com/whale-team/whaleEcho/internal/pkg/app/entity"
 	"github.com/whale-team/whaleEcho/internal/pkg/app/service"
 	"github.com/whale-team/whaleEcho/pkg/bytescronv"
 	"github.com/whale-team/whaleEcho/pkg/echoproto"
@@ -67,4 +68,20 @@ func (h Handler) Handle(c *wsserver.Context) error {
 func (Handler) GetCommand(ctx context.Context) *echoproto.Command {
 	command := ctx.Value(CoomandKey{}).(*echoproto.Command)
 	return command
+}
+
+// WsConnCloseHandle ...
+func (h Handler) WsConnCloseHandle(c *wsserver.Context) {
+	id := GetUserID(c.Context)
+	if id != 0 {
+		user := entity.User{ID: id}
+		h.svc.LeaveAllRooms(c.Context, &user)
+		log.Info().Msgf("ws: user(%d) leaves all rooms, due to connection closed", id)
+	}
+
+	if err := c.Close(); err != nil {
+		log.Error().Err(err).Msg("ws: client closed connection, server close connection failed")
+		return
+	}
+	log.Info().Msg("ws: client closed connection, server closed connection successfully")
 }
