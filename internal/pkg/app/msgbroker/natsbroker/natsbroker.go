@@ -46,5 +46,9 @@ func (broker NatsBroker) PublishMessage(ctx context.Context, subject string, mes
 	if err != nil {
 		return err
 	}
-	return conn.Publish(subject, message)
+	if err := conn.Publish(subject, message); err != nil {
+		return err
+	}
+
+	return conn.Recycle()
 }
