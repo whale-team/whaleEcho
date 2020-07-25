@@ -22,7 +22,7 @@ func AssertSendMessage(msg *echoproto.Message, room *echoproto.Room, command *ec
 	command.Payload = msgData
 	err = suite.SendCommand(conn, command)
 	assert.Nil(suite.T, err)
-	AssertRespStatus(conn, echoproto.Status_OK)
+	// AssertRespStatus(conn, echoproto.Status_OK)
 	return command.Payload
 }
 
