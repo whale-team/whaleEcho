@@ -40,7 +40,7 @@ func relativePath(path string) string {
 }
 
 func setupSuite() error {
-	suite = NewSuite("127.0.0.1", "22222")
+	suite = NewSuite("127.0.0.1", "22221")
 
 	if err := suite.initData(); err != nil {
 		return err
