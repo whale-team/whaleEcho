@@ -55,6 +55,7 @@ func (s *wsSuite) setupServer(handler wshandler.Handler) {
 	}
 	s.server.ConnBuildHandler = middleware.WsConnBuildHandle
 	s.server.ConnCloseHandler = middleware.WsConnCloseHandle
+	s.server.Recovery = middleware.WsRecovery
 }
 
 func (s *wsSuite) initData() error {
