@@ -22,8 +22,10 @@ func SetupWsServer(config configs.Configuration, handler wshandler.Handler) *wss
 
 	server.ErrHandler = middleware.WsErrorHandle
 	server.ConnBuildHandler = middleware.WsConnBuildHandle
-	server.ConnCloseHandler = middleware.WsConnCloseHandle
+	server.ConnCloseHandler = handler.WsConnCloseHandle
 	server.Handler = handler.Handle
+	server.Recovery = middleware.WsRecovery
+
 	return server
 }
 

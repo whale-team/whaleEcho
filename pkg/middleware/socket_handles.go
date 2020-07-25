@@ -21,9 +21,9 @@ func WsErrorHandle(c *wsserver.Context, err error) {
 	}
 
 	response := &echoproto.Message{
-		Type:     echoproto.MessageType_Response,
 		Status:   echoproto.Status(wsErr.Status),
 		Messages: []string{wsErr.Message},
+		Type:     echoproto.MessageType_Response,
 	}
 	respData, err := proto.Marshal(response)
 	if err != nil {
@@ -50,4 +50,10 @@ func WsConnCloseHandle(c *wsserver.Context) {
 		return
 	}
 	log.Info().Msg("ws: client closed connection, server closed connection successfully")
+}
+
+func WsRecovery(c *wsserver.Context) {
+	if err := recover(); err != nil {
+		WsErrorHandle(c, err.(error))
+	}
 }
