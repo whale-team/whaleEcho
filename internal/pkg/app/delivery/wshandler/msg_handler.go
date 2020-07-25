@@ -1,6 +1,7 @@
 package wshandler
 
 import (
+	"github.com/rs/zerolog/log"
 	"github.com/whale-team/whaleEcho/internal/pkg/app/entity"
 	"github.com/whale-team/whaleEcho/internal/pkg/app/mapper"
 	"github.com/whale-team/whaleEcho/pkg/bytescronv"
@@ -21,6 +22,8 @@ func (h Handler) SendMessage(c *wsserver.Context, payload []byte) error {
 	if err := h.svc.PublishText(c.Context, msg); err != nil {
 		return err
 	}
+
+	log.Debug().Msgf("handler: user(%d) publish message(%s) to room(%s)", msg.Sender.ID, msg.Text, msg.Room.UID)
 	return ReplyResponse(c, echoproto.Status_OK)
 }
 
@@ -38,6 +41,9 @@ func (h Handler) JoinRoom(c *wsserver.Context, payload []byte) error {
 		return err
 	}
 
+	log.Debug().Msgf("handler: user(%d) join room(%s)", user.GetID(), room.UID)
+
+	c.Context = AttachUserID(c.Context, user.GetID())
 	return ReplyResponse(c, echoproto.Status_OK)
 }
 
