@@ -26,4 +26,5 @@ type Servicer interface {
 	JoinRoom(ctx context.Context, roomUID string, user *entity.User) error
 	PublishText(ctx context.Context, msg *entity.Message) error
 	LeaveRoom(ctx context.Context, roomUID string, user *entity.User) error
+	LeaveAllRooms(ctx context.Context, user *entity.User) error
 }
