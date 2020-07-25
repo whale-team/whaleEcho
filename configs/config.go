@@ -27,10 +27,6 @@ type Configuration struct {
 	Nats natspool.Config `yaml:"nats"`
 }
 
-func (c Configuration) PrvoideLog() zlogging.Config {
-	return c.Log
-}
-
 // Empty check if configuration is empty
 func (c Configuration) Empty() bool {
 	return reflect.DeepEqual(c, Configuration{})
