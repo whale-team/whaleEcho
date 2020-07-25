@@ -89,3 +89,12 @@ func (con *roomsContainer) LeaveRoom(roomUID string, p entity.Participant) {
 
 	con.rooms[roomUID].Leave(p)
 }
+
+func (con *roomsContainer) LeaveAllRooms(p entity.Participant) {
+	con.mu.RLock()
+	defer con.mu.RUnlock()
+
+	for _, room := range con.rooms {
+		room.Leave(p)
+	}
+}
