@@ -3,8 +3,5 @@ package subjects
 const (
 	OpenRoomSubject  = "rooms.open"
 	CloseRoomSubject = "rooms.close"
+	RoomMsgSubject   = "rooms.message"
 )
-
-func RoomSubject(roomUID string) string {
-	return "room." + roomUID
-}

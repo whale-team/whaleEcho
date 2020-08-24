@@ -36,13 +36,10 @@ import (
 
 func TestChiness(t *testing.T) {
 	msg := &Message{
-		Uid:  "12345678901234567890",
-		Text: "你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，",
-		Type: MessageType_Text,
-		Sender: &User{
-			Id:   1,
-			Name: "隔壁的小王",
-		},
+		Uid:        "12345678901234567890",
+		Text:       "你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，",
+		Type:       MessageType_Text,
+		SenderName: "隔壁的小王",
 	}
 	data, err := proto.Marshal(msg)
 	assert.Nil(t, err)
@@ -58,16 +55,11 @@ func BenchmarkProto(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		msg := &Message{
-			Uid:  "12345678901234567890",
-			Text: "你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，",
-			Type: MessageType_Text,
-			Sender: &User{
-				Id:   1,
-				Name: "隔壁的小王",
-			},
-			Room: &Room{
-				Uid: "14293403902afkasdlgk23423fsdf",
-			},
+			Uid:        "12345678901234567890",
+			Text:       "你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，",
+			Type:       MessageType_Text,
+			SenderName: "隔壁的小王",
+			RoomUid:    "test21342sd",
 		}
 		data, _ := proto.Marshal(msg)
 		msg2 := &Message{}
@@ -80,16 +72,11 @@ func BenchmarkJson(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		msg := &Message{
-			Uid:  "12345678901234567890",
-			Text: "你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，",
-			Type: MessageType_Text,
-			Sender: &User{
-				Id:   1,
-				Name: "隔壁的小王",
-			},
-			Room: &Room{
-				Uid: "14293403902afkasdlgk23423fsdf",
-			},
+			Uid:        "12345678901234567890",
+			Text:       "你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，你好嗎，我很好，",
+			Type:       MessageType_Text,
+			SenderName: "隔壁的小王",
+			RoomUid:    "test21342sd",
 		}
 		data, _ := json.Marshal(msg)
 		msg2 := &Message{}

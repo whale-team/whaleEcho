@@ -9,11 +9,3 @@ const (
 	// File represent file
 	File
 )
-
-// SysMsgType represent system message type
-type SysMsgType int8
-
-const (
-	// CloseRoom represent room closed system message
-	CloseRoom SysMsgType = iota + 1
-)

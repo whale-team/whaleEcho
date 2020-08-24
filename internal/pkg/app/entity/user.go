@@ -1,41 +1,28 @@
 package entity
 
 import (
-	"net"
-
-	"github.com/gobwas/ws/wsutil"
+	"github.com/vicxu416/wsserver"
 )
-
-// NewUser construct a user struct
-func NewUser(conn net.Conn) *User {
-	return &User{
-		conn: conn,
-	}
-}
 
 // User represent mapping between client connection and its identitiy
 type User struct {
-	conn net.Conn
-	Name string
-	ID   int64
+	connCtx *wsserver.Context
+	Name    string
+	UID     string
+	RoomUID string
 }
 
 // BindConn binding websocket connection
-func (u *User) BindConn(conn net.Conn) {
-	u.conn = conn
+func (u *User) BindConn(connCtx *wsserver.Context) {
+	u.connCtx = connCtx
+}
+
+// IsValid return false if connCtx is nil
+func (u *User) IsValid() bool {
+	return u.connCtx != nil
 }
 
 // Receive message
-func (u User) Receive(msg MsgData) error {
-	return wsutil.WriteServerBinary(u.conn, msg.GetData())
-}
-
-// GetID return user id
-func (u User) GetID() int64 {
-	return u.ID
-}
-
-// MsgData represent GetData interface
-type MsgData interface {
-	GetData() []byte
+func (u User) Receive(msg []byte) error {
+	return u.connCtx.WriteBinary(msg)
 }

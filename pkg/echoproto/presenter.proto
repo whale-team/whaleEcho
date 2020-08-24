@@ -9,26 +9,24 @@ message Command {
 }
 
 message User {
-  int64 id = 1;
   string uid = 2;
   string name = 3;
+  string room_uid = 4;
 }
 
 message Room {
-  int64 id = 1;
   string uid = 2;
   string name = 3;
-  int64 creator_id = 4;
   string creator_name = 5;
-  int64 participants_limit = 6;
-  int64 live_duration = 7;
-  User participant = 8;
+  int64 members_limit = 6;
+  int64 members_count = 7;
+  int64 expired_at = 8;
 }
 
 message Message {
   string uid  = 1;
-  User sender = 2;
-  Room room = 3;
+  string sender_name = 2;
+  string room_uid = 3;
   string text = 4;
   bytes file = 5;
   string file_type = 6;

@@ -1,30 +1,30 @@
 package service
 
 import (
-	"context"
-
-	"github.com/whale-team/whaleEcho/internal/pkg/app/entity"
-	"github.com/whale-team/whaleEcho/internal/pkg/app/msgbroker"
-	"github.com/whale-team/whaleEcho/internal/pkg/app/roomscenter"
+	"github.com/whale-team/whaleEcho/internal/pkg/app"
+	"github.com/whale-team/whaleEcho/pkg/stanclient"
+	"go.uber.org/fx"
 )
 
-// New construct a message servicer
-func New(broker msgbroker.MsgBroker, rooms *roomscenter.Center) Servicer {
+// Params service dependency
+type Params struct {
+	fx.In
+	Dispatcher app.Dispatcher
+	StanCleint *stanclient.Client
+	Repo       app.Repositorier
+}
+
+// New domain service
+func New(params Params) app.Servicer {
 	return &service{
-		msgBroker: broker,
-		rooms:     rooms,
+		dispatcher: params.Dispatcher,
+		broker:     params.StanCleint,
+		repo:       params.Repo,
 	}
 }
 
 type service struct {
-	msgBroker msgbroker.MsgBroker
-	rooms     *roomscenter.Center
-}
-
-// Servicer provide message servicer interface
-type Servicer interface {
-	JoinRoom(ctx context.Context, roomUID string, user *entity.User) error
-	PublishText(ctx context.Context, msg *entity.Message) error
-	LeaveRoom(ctx context.Context, roomUID string, user *entity.User) error
-	LeaveAllRooms(ctx context.Context, user *entity.User) error
+	dispatcher app.Dispatcher
+	broker     app.Broker
+	repo       app.Repositorier
 }

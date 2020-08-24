@@ -3,9 +3,9 @@ package middleware
 import (
 	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
+	"github.com/vicxu416/wsserver"
 	"github.com/whale-team/whaleEcho/pkg/echoproto"
 	"github.com/whale-team/whaleEcho/pkg/wserrors"
-	"github.com/whale-team/whaleEcho/pkg/wsserver"
 	"google.golang.org/protobuf/proto"
 )
 

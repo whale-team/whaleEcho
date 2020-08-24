@@ -48,6 +48,8 @@ test.pkg:
 bench.proto: $(PRJ_PATH)/pkg/echoproto/proto_test.go
 	$(GOTEST) $(PRJ_PATH)/pkg/echoproto -run=None -bench=. --benchmem
 
+
+
 build.image:
 	docker build -t=$(DOCKEHUB)/whaleecho:$(IMAGE_TAG) -f $(PRJ_PATH)/deployments/docker/Dockerfile .
 
@@ -69,8 +71,11 @@ setup.env:
 
 ci: go.lint build test.all push.repo build.image push.image
 
-build.nats:
-	docker run -d --name nats -p 4222:4222 -p 6222:6222 -p 8222:8222 nats 
+run.natstreaming:
+	docker run --name natstreaming -d -p 4222:4222 nats-streaming -SD -V -cid whale
+	
+build.redis:
+	docker run --name redis -d -p 6379:6379 redis
 # cd: 
 
 # cicd: ci cd

@@ -5,7 +5,9 @@ import (
 	"reflect"
 	"runtime"
 
-	"github.com/whale-team/whaleEcho/pkg/natspool"
+	"github.com/whale-team/whaleEcho/internal/pkg/repository/db"
+	"github.com/whale-team/whaleEcho/pkg/stanclient"
+	"go.uber.org/fx"
 
 	"github.com/mitchellh/mapstructure"
 	"github.com/spf13/viper"
@@ -18,13 +20,15 @@ var _config Configuration
 
 // Configuration represent app configuration
 type Configuration struct {
+	fx.Out
 	WsServer struct {
 		Addr string `yaml:"addr"`
 		Port string `yaml:"port"`
 	} `yaml:"ws_server"`
 
-	Log  zlogging.Config `yaml:"log"`
-	Nats natspool.Config `yaml:"nats"`
+	Log   zlogging.Config   `yaml:"log"`
+	Stan  stanclient.Config `yaml:"stan"`
+	Redis db.RedisConfig    `yaml:"redis"`
 }
 
 // Empty check if configuration is empty
