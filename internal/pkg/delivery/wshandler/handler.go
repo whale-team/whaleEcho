@@ -56,15 +56,12 @@ func (h Handler) Handle(c *wsserver.Context) error {
 	ctx := c.Ctx
 	c.Ctx = context.WithValue(ctx, CoomandKey{}, command)
 
-	log.Logger = log.With().Fields(map[string]interface{}{
-		"command": commandTypeMap[command.Type],
-	}).Logger()
-
 	startAt := time.Now()
 	handleFunc := h.routeMap[command.Type]
 	err := handleFunc(c, command.Payload)
 	finishAt := time.Now()
 	fields := map[string]interface{}{
+		"command":     commandTypeMap[command.Type],
 		"started_at":  startAt.Format(time.RFC3339Nano),
 		"finished_at": finishAt.Format(time.RFC3339Nano),
 		"cost":        strconv.Itoa(int(finishAt.Sub(startAt).Microseconds())) + "μs",

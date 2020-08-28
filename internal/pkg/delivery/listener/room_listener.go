@@ -24,5 +24,5 @@ func (ln Listener) DispatchMessage(ctx context.Context, data []byte) error {
 		return err
 	}
 
-	return ln.svc.DispatchMessage(ctx, msg.RoomUID, msg)
+	return ln.svc.DispatchMessage(ctx, msg)
 }

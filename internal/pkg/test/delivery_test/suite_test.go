@@ -28,18 +28,26 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+var suite *testSuite
+
 func TestDelivery(t *testing.T) {
+	var err error
+	suite, err = setupSuite("127.0.0.1", "13333")
+	if err != nil {
+		t.Fatalf("setup suite failed, err:%+v", err)
+	}
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Websocket Handler Spec")
+	suite.teardown()
 }
-
-var addr = "127.0.0.1"
 
 type testSuite struct {
 	serv *wsserver.Server
 	app  *fx.App
 	ctx  context.Context
 	T    GinkgoTInterface
+	addr string
+	port string
 	stan *stanclient.Client
 	*testutil.TestSuite
 	repo        app.Repositorier
@@ -88,7 +96,7 @@ func (suite *testSuite) initData() error {
 	return nil
 }
 
-func (w testSuite) SendCommand(conn *websocket.Conn, command *echoproto.Command) error {
+func (suite testSuite) SendCommand(conn *websocket.Conn, command *echoproto.Command) error {
 	data, err := proto.Marshal(command)
 	if err != nil {
 		return err
@@ -96,7 +104,7 @@ func (w testSuite) SendCommand(conn *websocket.Conn, command *echoproto.Command)
 	return conn.WriteMessage(websocket.BinaryMessage, data)
 }
 
-func (w testSuite) ReadResp(conn *websocket.Conn) (*echoproto.Message, error) {
+func (suite testSuite) ReadResp(conn *websocket.Conn) (*echoproto.Message, error) {
 	_, data, err := conn.ReadMessage()
 	if err != nil {
 		return nil, err
@@ -121,6 +129,8 @@ func setupSuite(addr, port string) (*testSuite, error) {
 		T:         GinkgoT(),
 		TestSuite: testutil.NewSuite(),
 		buf:       new(bytes.Buffer),
+		addr:      addr,
+		port:      port,
 	}
 
 	writer := io.MultiWriter(suite.buf, os.Stdout)
@@ -147,6 +157,10 @@ func setupSuite(addr, port string) (*testSuite, error) {
 	suite.setupServer()
 
 	return &suite, nil
+}
+
+func (suite *testSuite) teardown() {
+	suite.stan.Close()
 }
 
 func newCommand(msg proto.Message, typ echoproto.CommandType) (echoproto.Command, error) {

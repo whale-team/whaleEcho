@@ -1,1 +1,3 @@
-docker run -d --name nats -p 4222:4222 -p 6222:6222 -p 8222:8222 nats 
+docker run --name natstreaming -d -p 4222:4222 nats-streaming -SD -V -cid whale
+docker run --name redis -d -p 6379:6379 redis
+

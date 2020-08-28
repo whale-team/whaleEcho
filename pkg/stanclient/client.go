@@ -18,7 +18,8 @@ type Subscription interface {
 
 // Client nats stan client adapter
 type Client struct {
-	conn *stanProxy
+	conn     *stanProxy
+	ClientID string
 }
 
 type msgHandler func(ctx context.Context, data []byte) error
@@ -53,18 +54,28 @@ func (h msgHandler) Handle() func(msg *stan.Msg) {
 
 // Subscribe subscribe a handler on subject
 func (c *Client) Subscribe(subject string, msgCallback func(ctx context.Context, data []byte) error) error {
-	_, err := c.getConn().Subscribe(subject, msgHandler(msgCallback).Handle())
+	_, err := c.getConn().Subscribe(subject, msgHandler(msgCallback).Handle(), c.duration())
 	return err
 }
 
 func (c *Client) SubscribeQueue(subject, group string, msgCallback func(ctx context.Context, data []byte) error) error {
-	_, err := c.getConn().QueueSubscribe(subject, group, msgHandler(msgCallback).Handle())
+	_, err := c.getConn().QueueSubscribe(subject, group, msgHandler(msgCallback).Handle(), c.duration())
 	return err
 }
 
 // Publish publish data to subject
 func (c *Client) Publish(ctx context.Context, subject string, data []byte) error {
 	return c.getConn().Publish(subject, data)
+}
+
+func (c *Client) Close() error {
+	c.getConn().Close()
+	c.getConn().NatsConn().Close()
+	return nil
+}
+
+func (c *Client) duration() stan.SubscriptionOption {
+	return stan.DurableName(c.ClientID)
 }
 
 func (c *Client) getConn() stan.Conn {

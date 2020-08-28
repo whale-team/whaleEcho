@@ -1,7 +1,6 @@
 package delivery_test
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -24,8 +23,8 @@ func createRoom(suite *testSuite, roomData *echoproto.Room) {
 	assert.Contains(suite.T, suite.buf.String(), "receive message on subject(rooms.open")
 }
 
-func joinRoom(suite *testSuite, userData *echoproto.User, port string) *websocket.Conn {
-	conn, err := dial(addr, port)
+func joinRoom(suite *testSuite, userData *echoproto.User, status echoproto.Status) *websocket.Conn {
+	conn, err := dial(suite.addr, suite.port)
 	assert.NoError(suite.T, err)
 	command, err := newCommand(userData, echoproto.CommandType_JoinRoom)
 	assert.NoError(suite.T, err)
@@ -34,19 +33,12 @@ func joinRoom(suite *testSuite, userData *echoproto.User, port string) *websocke
 	time.Sleep(5 * time.Millisecond)
 	msg, err := suite.ReadResp(conn)
 	assert.NoError(suite.T, err)
-	assert.Equal(suite.T, msg.Status, echoproto.Status_OK)
+	assert.Equal(suite.T, msg.Status, status)
 	assert.Contains(suite.T, suite.buf.String(), "join_room")
 	return conn
 }
 
 var _ = Describe("Room Delivery Test", func() {
-	port := "13333"
-	suite, err := setupSuite(addr, port)
-	if err != nil {
-		fmt.Printf("setup suite failed, err:%+v", err)
-		return
-	}
-
 	AfterEach(func() {
 		suite.clear()
 	})
@@ -58,7 +50,7 @@ var _ = Describe("Room Delivery Test", func() {
 				createRoom(suite, roomData)
 				assert.GreaterOrEqual(suite.T, suite.rms.Len(), 1)
 				room := &entity.Room{}
-				err = suite.repo.GetRoom(suite.ctx, suite.rooms[0].Uid, room)
+				err := suite.repo.GetRoom(suite.ctx, suite.rooms[0].Uid, room)
 				assert.NoError(suite.T, err)
 				assert.Equal(suite.T, room.UID, roomData.Uid)
 				assert.Equal(suite.T, room.MembersLimit, roomData.MembersLimit)
@@ -72,9 +64,9 @@ var _ = Describe("Room Delivery Test", func() {
 			userData := suite.users[0]
 			It("shuld increase room members count", func() {
 				createRoom(suite, roomData)
-				joinRoom(suite, userData, port)
+				joinRoom(suite, userData, echoproto.Status_OK)
 				room := &entity.Room{}
-				err = suite.repo.GetRoom(suite.ctx, userData.RoomUid, room)
+				err := suite.repo.GetRoom(suite.ctx, userData.RoomUid, room)
 				assert.NoError(suite.T, err)
 				assert.GreaterOrEqual(suite.T, room.MembersCount, int64(1))
 				room = suite.rms.GetRoom(userData.RoomUid)
@@ -96,14 +88,39 @@ var _ = Describe("Room Delivery Test", func() {
 			})
 
 			It("should increase room members count", func() {
-				joinRoom(suite, userData, port)
+				joinRoom(suite, userData, echoproto.Status_OK)
 				room := &entity.Room{}
-				err = suite.repo.GetRoom(suite.ctx, userData.RoomUid, room)
+				err := suite.repo.GetRoom(suite.ctx, userData.RoomUid, room)
 				assert.NoError(suite.T, err)
 				assert.GreaterOrEqual(suite.T, room.MembersCount, int64(1))
 				room = suite.rms.GetRoom(userData.RoomUid)
 				assert.NotNil(suite.T, room)
 				assert.GreaterOrEqual(suite.T, room.CurrentMembersCount(), 1)
+			})
+		})
+
+		Context("when join a room which is out of limit", func() {
+			userData := suite.users[1]
+			room := &entity.Room{
+				UID:          userData.RoomUid,
+				MembersLimit: 0,
+			}
+
+			BeforeEach(func() {
+				suite.rms.CreateRoom(room)
+				err := suite.repo.CreateRoom(suite.ctx, room)
+				assert.NoError(suite.T, err)
+			})
+
+			It("should return not allow message", func() {
+				joinRoom(suite, userData, echoproto.Status_NotAllow)
+				room := &entity.Room{}
+				err := suite.repo.GetRoom(suite.ctx, userData.RoomUid, room)
+				assert.NoError(suite.T, err)
+				assert.Equal(suite.T, room.MembersCount, int64(0))
+				room = suite.rms.GetRoom(userData.RoomUid)
+				assert.NotNil(suite.T, room)
+				assert.Equal(suite.T, room.CurrentMembersCount(), 0)
 			})
 		})
 	})

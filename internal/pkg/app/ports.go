@@ -11,7 +11,7 @@ type Broker interface {
 	Publish(ctx context.Context, subject string, data []byte) error
 }
 
-// Dispatcher manage rooms in memory
+// Dispatcher is responsbile for managing client connections
 type Dispatcher interface {
 	RegisterRoom(ctx context.Context, room *entity.Room) error
 	CloseRoom(ctx context.Context, roomUID string) error
@@ -34,7 +34,7 @@ type Servicer interface {
 	CreateRoom(ctx context.Context, room *entity.Room) error
 	JoinRoom(ctx context.Context, roomUID string, user *entity.User) error
 	CloseRoom(ctx context.Context, roomUID string) error
-	PublishMessage(ctx context.Context, msg *entity.Message) error
+	PublishRoomMessage(ctx context.Context, data []byte) error
 	LeaveRoom(ctx context.Context, roomUID string, userID string) error
-	DispatchMessage(ctx context.Context, roomUID string, msg *entity.Message) error
+	DispatchMessage(ctx context.Context, msg *entity.Message) error
 }

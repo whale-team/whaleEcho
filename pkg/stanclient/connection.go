@@ -2,6 +2,7 @@ package stanclient
 
 import (
 	"os"
+	"strings"
 	"time"
 
 	"github.com/nats-io/nats.go"
@@ -20,6 +21,7 @@ type Config struct {
 func New(config Config) (*Client, error) {
 	if config.ClientID == "" {
 		config.ClientID, _ = os.Hostname()
+		config.ClientID = strings.Replace(config.ClientID, ".", "", -1)
 	}
 
 	proxy, err := newProxy(config)
@@ -28,7 +30,8 @@ func New(config Config) (*Client, error) {
 	}
 
 	return &Client{
-		conn: proxy,
+		conn:     proxy,
+		ClientID: config.ClientID,
 	}, nil
 }
 
