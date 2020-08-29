@@ -2,8 +2,19 @@ package entity
 
 import (
 	"sync"
+	"time"
 
 	"github.com/rs/zerolog/log"
+	"github.com/whale-team/whaleEcho/pkg/echoproto"
+	"google.golang.org/protobuf/proto"
+)
+
+var (
+	CloseRoomMsg = &echoproto.Message{
+		SenderName: "whale",
+		Type:       echoproto.MessageType_Text,
+		Text:       "room closed!",
+	}
 )
 
 // Room represent chating room
@@ -71,12 +82,19 @@ func (room *Room) Clear() {
 }
 
 func (room *Room) SendCloseMsg() error {
-	closeRoomMsg := []byte("Room" + room.Name + "Closed")
 	room.rw.Lock()
 	defer room.rw.Unlock()
 
 	for _, u := range room.getUsersMap() {
-		u.Receive(closeRoomMsg)
+		u.Receive(room.getCloseRoomMsg())
 	}
 	return nil
+}
+
+func (room *Room) getCloseRoomMsg() []byte {
+	msg := CloseRoomMsg
+	msg.SentAt = time.Now().Unix()
+	msg.RoomUid = room.UID
+	data, _ := proto.Marshal(msg)
+	return data
 }

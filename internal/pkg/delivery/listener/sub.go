@@ -19,6 +19,13 @@ func Listen(ln Listener) error {
 		return err
 	}
 	err = ln.sub.Subscribe(subjects.OpenRoomSubject, ln.CreateRoom)
+	log.Info().Msgf("listener: subscribe on %s", subjects.OpenRoomSubject)
+	if err != nil {
+		return err
+	}
+
+	err = ln.sub.Subscribe(subjects.CloseRoomSubject, ln.CloseRoom)
+	log.Info().Msgf("listener: subscribe on %s", subjects.CloseRoomSubject)
 	if err != nil {
 		return err
 	}
@@ -28,6 +35,6 @@ func Listen(ln Listener) error {
 			return err
 		}
 	}
-	log.Info().Msgf("listener: subscribe %s", subjects.RoomMsgSubject)
+	log.Info().Msgf("listener: queue subscribe on %s, queue:%s", subjects.RoomMsgSubject, groupName)
 	return nil
 }

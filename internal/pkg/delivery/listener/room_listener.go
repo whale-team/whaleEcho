@@ -32,3 +32,16 @@ func (ln Listener) DispatchMessage(ctx context.Context, data []byte) error {
 
 	return ln.svc.DispatchMessage(ctx, msg)
 }
+
+func (ln Listener) CloseRoom(ctx context.Context, data []byte) error {
+	var (
+		room = &entity.Room{}
+		err  error
+	)
+
+	if err = converter.UnmarshalRoom(data, room); err != nil {
+		return err
+	}
+
+	return ln.svc.CloseRoom(ctx, room.UID)
+}

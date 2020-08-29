@@ -55,6 +55,12 @@ func leaveRoom(suite *testSuite, conn *websocket.Conn, userData *echoproto.User,
 	assert.Contains(suite.T, suite.buf.String(), "leave_room")
 }
 
+func closeRoom(suite *testSuite, room *echoproto.Room) {
+	data, err := proto.Marshal(room)
+	assert.NoError(suite.T, err)
+	suite.stan.Publish(suite.ctx, subjects.CloseRoomSubject, data)
+}
+
 var _ = Describe("Room Delivery Test", func() {
 	AfterEach(func() {
 		suite.clear()
@@ -170,6 +176,32 @@ var _ = Describe("Room Delivery Test", func() {
 				err = suite.repo.GetRoom(suite.ctx, room.Uid, r)
 				assert.NoError(suite.T, err)
 				assert.Equal(suite.T, r.MembersCount, int64(0))
+			})
+		})
+	})
+
+	Describe("Listener#CloseRoom", func() {
+		Context("when receive close room subject", func() {
+			var (
+				room = suite.rooms[0]
+				user = suite.users[0]
+				conn = &websocket.Conn{}
+			)
+
+			JustBeforeEach(func() {
+				createRoom(suite, room)
+				user.RoomUid = room.Uid
+				conn = joinRoom(suite, user, echoproto.Status_OK)
+			})
+
+			It("should close room and publish close room message", func() {
+				closeRoom(suite, room)
+				msg, err := suite.ReadResp(conn)
+				assert.NoError(suite.T, err)
+				assert.NotNil(suite.T, msg)
+				assert.Equal(suite.T, msg.RoomUid, room.Uid)
+				assert.Contains(suite.T, msg.Text, "closed")
+				assert.Contains(suite.T, msg.SenderName, "whale")
 			})
 		})
 	})

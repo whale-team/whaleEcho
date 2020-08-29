@@ -112,5 +112,25 @@ func (s service) LeaveRoom(ctx context.Context, roomUID string, userID string) e
 }
 
 func (s service) CloseRoom(ctx context.Context, roomUID string) error {
+	var (
+		err  error
+		room = entity.Room{}
+	)
+
+	err = s.repo.GetRoom(ctx, roomUID, &room)
+	if err != nil && !wserrors.Is(err, db.ErrNotFound) {
+		return wserrors.Wrapf(wserrors.ErrInternal, "svc: CloseRoom repo get room occur error, err:%+v, roomUID:%s", err, roomUID)
+	}
+	if room.UID != "" {
+		err = s.repo.DeleteRoom(ctx, roomUID)
+	}
+	if err != nil {
+		return wserrors.Wrapf(wserrors.ErrInternal, "svc: CloseRoom repo delete room occur error, err:%+v, roomUID:%s", err, roomUID)
+	}
+
+	if err = s.dispatcher.CloseRoom(ctx, roomUID); err != nil {
+		return wserrors.Wrapf(wserrors.ErrInternal, "svc: CloseRoom dispatcher close room occur error, err:%+v, roomUID:%s", err, roomUID)
+	}
+
 	return nil
 }

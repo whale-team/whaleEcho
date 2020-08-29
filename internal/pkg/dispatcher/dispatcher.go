@@ -31,7 +31,11 @@ func (d *Dispatcher) RegisterRoom(ctx context.Context, room *entity.Room) error 
 
 func (d *Dispatcher) CloseRoom(ctx context.Context, roomUID string) error {
 	room := d.rms.DeleteRoom(roomUID)
-	return room.SendCloseMsg()
+	if err := room.SendCloseMsg(); err != nil {
+		return err
+	}
+	room = nil
+	return nil
 }
 
 func (d *Dispatcher) JoinUserToRoom(ctx context.Context, roomUID string, user *entity.User) error {
