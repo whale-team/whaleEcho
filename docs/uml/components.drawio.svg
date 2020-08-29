@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="391px" height="291px" viewBox="-0.5 -0.5 391 291" content="&lt;mxfile host=&quot;&quot; modified=&quot;2020-08-19T12:54:14.639Z&quot; agent=&quot;5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.44.2 Chrome/78.0.3904.130 Electron/7.1.11 Safari/537.36&quot; etag=&quot;xJP0CGfrS2Mp4dy0ZHDc&quot; version=&quot;13.1.3&quot;&gt;&lt;diagram id=&quot;6hGFLwfOUW9BJ-s0fimq&quot; name=&quot;Page-1&quot;&gt;3VhBc6MgFP413lXUmGtt2h66e9gceib6VCYoLpKY7K9fEEy0pNMeajojmUn0ezzgfd/zQXRQUp2eOW7KXywD6vhudnLQo+P7cRTKbwWcNRAFvgYKTjINeVdgS/6BAV2DHkgG7aSjYIwK0kzBlNU1pGKCYc5ZN+2WMzqdtcEFWMA2xdRG30gmSoN60fpqeAFSlGbq2F9pww6n+4KzQ23mc3z01DdtrvAwlgm0LXHGuhGENg5KOGNCX1WnBKiidqBN+z19YL2sm0MtvuQwCHPE9GCCfyWtgBq4WaE4D6z0cYHy9Bz00JVEwLbBqbJ2Mg0kVoqKGnNOKE0YZbz3RXmoPhJvBWd7GFmivikPVosRrpvE7ZhMmEfgAk4jyMT4DKwCwc+yi7FeEsvkoxea+26k7tpg5UjYwGDYJFRxGfpKqrwwvH7EMbI4fiRtg0VaLppl/xbL/mwsBzbLQIlc/nnBHHuuzTGaL5NDi+MXXGd0UWkc/GyxWFkUO35EhYm53/SGsKO/B7VRyKCR27cxFBXq9zcW7eAv59ZDaNO3SpZhiPP0pmRpDLt8nuy/rzLxtyrzBruWpXsQy5Hn/ZNzS554NnnWljxb4EciCVpObbK22LuW/0HPEcUPioQlVX8UfOEQg2Zj2D6O6wruJpSooJZLNLqRyjMSbZ/JrYK840MtTvT/TMLqBQnwvpbcFGC243poHyX/QMNaItiiDuzBav15PZmP5chieSPSbEn8xvfLYnl7fTXT20avv9DmPw==&lt;/diagram&gt;&lt;/mxfile&gt;" style="background-color: rgb(255, 255, 255);">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="391px" height="291px" viewBox="-0.5 -0.5 391 291" content="&lt;mxfile host=&quot;&quot; modified=&quot;2020-08-29T07:42:05.026Z&quot; agent=&quot;5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.44.2 Chrome/78.0.3904.130 Electron/7.1.11 Safari/537.36&quot; etag=&quot;IHSuBsmtkPcmu0ju02qj&quot; version=&quot;13.1.3&quot;&gt;&lt;diagram id=&quot;6hGFLwfOUW9BJ-s0fimq&quot; name=&quot;Page-1&quot;&gt;3VhNk6MgEP013lXUmOs4X4fdPWwOcybaKhUUF0lM9tcvCCY6ODVzGLNVkqpEX9NAv9c2RAcl1fmF46b8yTKgju9mZwc9Or4fRaH8VsDFAIGvgYKTTEPeDdiRv2BA16BHkkE76SgYo4I0UzBldQ2pmGCYc9ZNu+WMTmdtcAEWsEsxtdE3konSoF60vRlegRSlmTr2N9qwx+mh4OxYm/kcHz33TZsrPIxlAm1LnLFuBKEnByWcMaGvqnMCVFE70Kb9nj+wXtfNoRZfchiEOWF6NMH/IK2AGrhZobgMrPRxgfL0HPTQlUTArsGpsnYyDSRWiooac04oTRhlvPdFeag+Em8FZwcYWaK+KQ9WixGum8TtmEyYJ+ACziPIxPgCrALBL7KLsV4Ty+SjF5r7bqTu1mDlSNjAYNgkVHEd+kaqvDC8fsQxsjh+JG2DRVqummV/jmV/MZYDm2WgRC7/smKOPdfmGC2XyaHF8SuuM7qqNA7+b7HYWBQ7fkSFibnf9Iawoz9HtVHIoJHbtzEUFer3Fxbt4C/n1kNo07dKlmGI83RWsjSGfb5M9t9XmfhblXmDfcvSA4j1yPP+ybmvPFtLnh3wE5EErac2WVvsXcv/oOeI4gdFwpqqPwq+cIhBizFsH8d1BXcTSlRQ6yUazaTygkTbZ3KrIO/5UIsT/T+TsHpFAryvJbMCLHZcD+2j5G9oWEsEW9WBPdhsP68ny7EczbCckXZNBMf3S2N5e3s309tG77/Q0z8=&lt;/diagram&gt;&lt;/mxfile&gt;" style="background-color: rgb(255, 255, 255);">
     <defs/>
     <g>
         <rect x="0" y="100" width="190" height="40" rx="6" ry="6" fill="#f5f5f5" stroke="#666666" pointer-events="all"/>
@@ -88,11 +88,11 @@
                 </text>
             </switch>
         </g>
-        <rect x="200" y="0" width="180" height="40" rx="6" ry="6" fill="#dae8fc" stroke="#6c8ebf" pointer-events="all"/>
+        <rect x="200" y="0" width="190" height="40" rx="6" ry="6" fill="#dae8fc" stroke="#6c8ebf" pointer-events="all"/>
         <g transform="translate(-0.5 -0.5)">
             <switch>
                 <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
-                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 178px; height: 1px; padding-top: 20px; margin-left: 201px;">
+                    <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 188px; height: 1px; padding-top: 20px; margin-left: 201px;">
                         <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
                             <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: #000000; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
                                 <font color="#000000">
@@ -102,7 +102,7 @@
                         </div>
                     </div>
                 </foreignObject>
-                <text x="290" y="24" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
+                <text x="295" y="24" fill="#000000" font-family="Helvetica" font-size="12px" text-anchor="middle">
                     Websocket
                 </text>
             </switch>
@@ -201,13 +201,13 @@
                     <div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 118px; height: 1px; padding-top: 270px; margin-left: 271px;">
                         <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
                             <div style="display: inline-block; font-size: 12px; font-family: Helvetica; color: #333333; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">
-                                Etcd
+                                Redis
                             </div>
                         </div>
                     </div>
                 </foreignObject>
                 <text x="330" y="274" fill="#333333" font-family="Helvetica" font-size="12px" text-anchor="middle">
-                    Etcd
+                    Redis
                 </text>
             </switch>
         </g>
