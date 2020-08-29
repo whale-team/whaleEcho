@@ -28,11 +28,13 @@ var commandTypeMap = map[echoproto.CommandType]string{
 // type routeMap map[echoproto.CommandType]handleFunc
 type handleFunc func(c *wsserver.Context, payload []byte) error
 
+// Params Handler Dependencies
 type Params struct {
 	fx.In
 	Svc app.Servicer
 }
 
+// New create a handler instance
 func New(params Params) Handler {
 	return Handler{
 		svc: params.Svc,

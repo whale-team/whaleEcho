@@ -6,6 +6,7 @@ import (
 	"github.com/whale-team/whaleEcho/internal/pkg/app/entity"
 )
 
+// RoomToMap convert entity room to map
 func RoomToMap(room *entity.Room) map[string]interface{} {
 	return map[string]interface{}{
 		"uid":          room.UID,
@@ -15,6 +16,7 @@ func RoomToMap(room *entity.Room) map[string]interface{} {
 	}
 }
 
+// MapToRoom convert map to entity room
 func MapToRoom(source map[string]string, room *entity.Room) error {
 	room.UID = source["uid"]
 	room.Name = source["name"]

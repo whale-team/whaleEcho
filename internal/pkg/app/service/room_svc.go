@@ -111,6 +111,7 @@ func (s service) LeaveRoom(ctx context.Context, roomUID string, userID string) e
 	return nil
 }
 
+// CloseRoom close room delete room from redis and dispatcher
 func (s service) CloseRoom(ctx context.Context, roomUID string) error {
 	var (
 		err  error

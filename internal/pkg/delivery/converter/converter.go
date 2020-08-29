@@ -7,6 +7,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+// UnmarshalMessage convert proto message to entity message
 func UnmarshalMessage(data []byte, msg *entity.Message) error {
 	var (
 		msgProto = echoproto.Message{}
@@ -23,6 +24,7 @@ func UnmarshalMessage(data []byte, msg *entity.Message) error {
 	return nil
 }
 
+// UnmarshalUser convert proto user to entity user
 func UnmarshalUser(data []byte, user *entity.User) error {
 	var (
 		userProto = echoproto.User{}
@@ -37,6 +39,7 @@ func UnmarshalUser(data []byte, user *entity.User) error {
 	return nil
 }
 
+// UnmarshalRoom convert proto room to entity room
 func UnmarshalRoom(data []byte, room *entity.Room) error {
 	var (
 		roomProto = echoproto.Room{}

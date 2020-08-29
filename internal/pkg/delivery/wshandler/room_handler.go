@@ -30,6 +30,7 @@ func (h Handler) JoinRoom(c *wsserver.Context, payload []byte) error {
 	return ReplyResponse(c, echoproto.Status_OK)
 }
 
+// LeaveRoom make user leave room
 func (h Handler) LeaveRoom(c *wsserver.Context, payload []byte) error {
 	var (
 		user = entity.User{}

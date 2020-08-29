@@ -15,6 +15,7 @@ func (h *Handler) SetupRoutes() {
 	h.routeMap = routeMap
 }
 
+// SetupHandler bind msg handler function on websocker server
 func SetupHandler(serv *wsserver.Server, h Handler) error {
 	h.SetupRoutes()
 	serv.MsgHandlerFunc = h.Handle

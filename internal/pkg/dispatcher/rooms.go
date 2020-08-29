@@ -10,6 +10,7 @@ var _rooms *Rooms
 
 var once = sync.Once{}
 
+// NewRooms build a rooms connection container
 func NewRooms() *Rooms {
 	once.Do(func() {
 		_rooms = &Rooms{
@@ -26,6 +27,7 @@ type Rooms struct {
 	mu       sync.RWMutex
 }
 
+// Clear clear all rooms
 func (c *Rooms) Clear() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -37,16 +39,19 @@ func (c *Rooms) Clear() {
 	c.Reset()
 }
 
+// Len number of rooms
 func (c *Rooms) Len() int {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return len(c.roomsMap)
 }
 
+// Reset reset all rooms
 func (c *Rooms) Reset() {
 	c.roomsMap = make(map[string]*entity.Room)
 }
 
+// GetRoom get room based on roomUID
 func (c *Rooms) GetRoom(roomUID string) *entity.Room {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
@@ -54,6 +59,7 @@ func (c *Rooms) GetRoom(roomUID string) *entity.Room {
 	return c.roomsMap[roomUID]
 }
 
+// CreateRoom create room into memory
 func (c *Rooms) CreateRoom(room *entity.Room) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -63,6 +69,7 @@ func (c *Rooms) CreateRoom(room *entity.Room) {
 	}
 }
 
+// DeleteRoom delete room from memory
 func (c *Rooms) DeleteRoom(roomUID string) *entity.Room {
 	c.mu.Lock()
 	defer c.mu.Unlock()

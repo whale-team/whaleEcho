@@ -8,6 +8,7 @@ import (
 	"go.uber.org/fx"
 )
 
+// Params Dispatcher dependencies
 type Params struct {
 	fx.In
 	Rooms *Rooms
@@ -20,15 +21,18 @@ func New(params Params) app.Dispatcher {
 	}
 }
 
+// Dispatcher dispatch message to client connections
 type Dispatcher struct {
 	rms *Rooms
 }
 
+// RegisterRoom register a room client container
 func (d *Dispatcher) RegisterRoom(ctx context.Context, room *entity.Room) error {
 	d.rms.CreateRoom(room)
 	return nil
 }
 
+// CloseRoom delete the room from memory and send close message to connection
 func (d *Dispatcher) CloseRoom(ctx context.Context, roomUID string) error {
 	room := d.rms.DeleteRoom(roomUID)
 	if err := room.SendCloseMsg(); err != nil {
@@ -38,6 +42,7 @@ func (d *Dispatcher) CloseRoom(ctx context.Context, roomUID string) error {
 	return nil
 }
 
+// JoinUserToRoom join a client connection to room
 func (d *Dispatcher) JoinUserToRoom(ctx context.Context, roomUID string, user *entity.User) error {
 	if !user.IsValid() {
 
@@ -48,6 +53,7 @@ func (d *Dispatcher) JoinUserToRoom(ctx context.Context, roomUID string, user *e
 	return nil
 }
 
+// DispatchMessage dispatch message to all client connections
 func (d *Dispatcher) DispatchMessage(ctx context.Context, msg *entity.Message) error {
 	room := d.GetRoom(ctx, msg.RoomUID)
 	if room == nil {
@@ -57,6 +63,7 @@ func (d *Dispatcher) DispatchMessage(ctx context.Context, msg *entity.Message) e
 	return nil
 }
 
+// GetRoom get the room from memory
 func (d *Dispatcher) GetRoom(ctx context.Context, roomUID string) *entity.Room {
 	room := d.rms.GetRoom(roomUID)
 	if room == nil {
@@ -65,6 +72,7 @@ func (d *Dispatcher) GetRoom(ctx context.Context, roomUID string) *entity.Room {
 	return room
 }
 
+// RemoveUserFromRoom remove client connection
 func (d *Dispatcher) RemoveUserFromRoom(ctx context.Context, roomUID, userUID string) error {
 	room := d.rms.GetRoom(roomUID)
 	if room == nil {

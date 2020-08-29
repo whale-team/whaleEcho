@@ -7,9 +7,6 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-// UserIDKey represent context key for storing user id
-type RequestID struct{}
-
 // ReplyResponse function used to reply response message to websocket client
 func ReplyResponse(c *wsserver.Context, status echoproto.Status, messages ...string) error {
 	resp := &echoproto.Message{

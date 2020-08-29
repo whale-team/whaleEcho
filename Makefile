@@ -34,7 +34,7 @@ go.proto:
 	--go_opt=paths=source_relative $(PRJ_PATH)/pkg/echoproto/*.proto
 
 go.lint:
-	golint $(PRJ_PATH)/internal/pkg/app/...
+	golint $(PRJ_PATH)/internal/...
 
 test:
 	$(GOTEST) $(TESTPATH)/$(test)_test -count=1

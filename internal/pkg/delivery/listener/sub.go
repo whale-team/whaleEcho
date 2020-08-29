@@ -8,11 +8,13 @@ import (
 	"github.com/whale-team/whaleEcho/pkg/subjects"
 )
 
+// Subscriber define subscribe behavior
 type Subscriber interface {
 	Subscribe(subject string, msgHandler func(ctx context.Context, data []byte) error) error
 	SubscribeQueue(subject, group string, msgCallback func(ctx context.Context, data []byte) error) error
 }
 
+// Listen register Listener on subjects
 func Listen(ln Listener) error {
 	groupName, err := os.Hostname()
 	if err != nil {

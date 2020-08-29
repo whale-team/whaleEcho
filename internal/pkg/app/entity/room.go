@@ -60,6 +60,7 @@ func (room *Room) JoinUser(user *User) {
 	room.uids = append(room.getUids(), user.UID)
 }
 
+// RemoveUser remove user from the room
 func (room *Room) RemoveUser(userUID string) *User {
 	room.rw.Lock()
 	defer room.rw.Unlock()
@@ -69,6 +70,7 @@ func (room *Room) RemoveUser(userUID string) *User {
 	return user
 }
 
+// PublishMessage publish message to all users
 func (room *Room) PublishMessage(msg []byte) error {
 	return room.publishMessageFaster(msg)
 }
@@ -110,6 +112,7 @@ func (room *Room) publishMessageFaster(msg []byte) error {
 	return nil
 }
 
+// Clear clear user connections
 func (room *Room) Clear() {
 	room.rw.Lock()
 	defer room.rw.Unlock()
@@ -123,6 +126,7 @@ func (room *Room) Clear() {
 	}
 }
 
+// SendCloseMsg send close message
 func (room *Room) SendCloseMsg() error {
 	room.rw.Lock()
 	defer room.rw.Unlock()
@@ -141,6 +145,7 @@ func (room *Room) getCloseRoomMsg() []byte {
 	return data
 }
 
+// DivideSlice divide slice to small parts
 func DivideSlice(slice []string, base int) [][]string {
 	l := len(slice)
 	if base > l {

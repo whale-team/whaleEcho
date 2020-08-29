@@ -9,15 +9,18 @@ import (
 )
 
 var (
+	// ErrNotFound represent record not found err
 	ErrNotFound = errors.New("record not found")
 )
 
 const roomKey = "room"
 
+// Repo implement data layer interface
 type Repo struct {
 	redisDB *redis.Client
 }
 
+// CreateRoom create the room in redis db
 func (repo *Repo) CreateRoom(ctx context.Context, room *entity.Room) error {
 	roomMap := RoomToMap(room)
 
@@ -28,15 +31,18 @@ func (repo *Repo) CreateRoom(ctx context.Context, room *entity.Room) error {
 	return nil
 }
 
+// IncrMember increase member count on room
 func (repo *Repo) IncrMember(ctx context.Context, roomUID string) (int64, error) {
 	return repo.redisDB.HIncrBy(ctx, roomKey+"."+roomUID, "membersCount", 1).Result()
 }
 
+// DecrMember decrease member count on room
 func (repo *Repo) DecrMember(ctx context.Context, roomUID string) (int64, error) {
 
 	return repo.redisDB.HIncrBy(ctx, roomKey+"."+roomUID, "membersCount", -1).Result()
 }
 
+// GetRoom get room info from redis db
 func (repo *Repo) GetRoom(ctx context.Context, roomUID string, room *entity.Room) error {
 	mapData, err := repo.redisDB.HGetAll(ctx, roomKey+"."+roomUID).Result()
 	if err != nil {
@@ -54,6 +60,7 @@ func (repo *Repo) GetRoom(ctx context.Context, roomUID string, room *entity.Room
 	return nil
 }
 
+// DeleteRoom delete room from redis db
 func (repo *Repo) DeleteRoom(ctx context.Context, roomUID string) error {
 	_, err := repo.redisDB.Del(ctx, roomKey+"."+roomUID).Result()
 	return err

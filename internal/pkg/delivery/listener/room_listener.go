@@ -7,6 +7,7 @@ import (
 	"github.com/whale-team/whaleEcho/internal/pkg/delivery/converter"
 )
 
+// CreateRoom create room handle
 func (ln Listener) CreateRoom(ctx context.Context, data []byte) error {
 	var (
 		room = &entity.Room{}
@@ -20,6 +21,7 @@ func (ln Listener) CreateRoom(ctx context.Context, data []byte) error {
 	return ln.svc.CreateRoom(ctx, room)
 }
 
+// DispatchMessage dispatch message to room handle
 func (ln Listener) DispatchMessage(ctx context.Context, data []byte) error {
 	var (
 		msg = &entity.Message{}
@@ -33,6 +35,7 @@ func (ln Listener) DispatchMessage(ctx context.Context, data []byte) error {
 	return ln.svc.DispatchMessage(ctx, msg)
 }
 
+// CloseRoom close the room handle
 func (ln Listener) CloseRoom(ctx context.Context, data []byte) error {
 	var (
 		room = &entity.Room{}
