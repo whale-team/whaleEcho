@@ -1,32 +1,35 @@
 package entity
 
-import (
-	"github.com/vicxu416/wsserver"
-)
+// BinaryWriterCloser define write close method
+type BinaryWriterCloser interface {
+	WriteBinary([]byte) error
+	Close() error
+}
 
 // User represent mapping between client connection and its identitiy
 type User struct {
-	connCtx *wsserver.Context
+	conn    BinaryWriterCloser
 	Name    string
 	UID     string
 	RoomUID string
 }
 
 // BindConn binding websocket connection
-func (u *User) BindConn(connCtx *wsserver.Context) {
-	u.connCtx = connCtx
+func (u *User) BindConn(connCtx BinaryWriterCloser) {
+	u.conn = connCtx
 }
 
+// CloseConn close the connection
 func (u *User) CloseConn() error {
-	return u.connCtx.Close()
+	return u.conn.Close()
 }
 
 // IsValid return false if connCtx is nil
 func (u *User) IsValid() bool {
-	return u.connCtx != nil
+	return u.conn != nil
 }
 
 // Receive message
 func (u User) Receive(msg []byte) error {
-	return u.connCtx.WriteBinary(msg)
+	return u.conn.WriteBinary(msg)
 }
