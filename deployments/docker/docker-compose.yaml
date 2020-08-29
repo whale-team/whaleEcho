@@ -12,16 +12,14 @@ services:
     - ENV=docker_dev
     depends_on: 
     - nats
+    - redis
     environment: 
     - CONFIG_NAME=app-container
   nats:
     image: "nats-streaming:0.18.0-alpine3.12"
-    volumes: natsstream:/nats/db
-    args:
-    - -cid whale
-    - -DV
-    - --store FILE
-    - --dir /nats/db
+    volumes: 
+    - natsstream:/nats/db
+    command: ["-cid", "whale", "-DV", "--store", "FILE", "--dir", "/nats/db"]
     networks:
     - echonet
   redis:
