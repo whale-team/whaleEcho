@@ -17,6 +17,7 @@ type Dispatcher interface {
 	CloseRoom(ctx context.Context, roomUID string) error
 	DispatchMessage(ctx context.Context, msg *entity.Message) error
 	JoinUserToRoom(ctx context.Context, roomUID string, user *entity.User) error
+	RemoveUserFromRoom(ctx context.Context, roomUID string, userUID string) error
 	GetRoom(ctx context.Context, roomUID string) *entity.Room
 }
 

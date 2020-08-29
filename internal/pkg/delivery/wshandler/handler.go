@@ -10,6 +10,7 @@ import (
 	"github.com/whale-team/whaleEcho/internal/pkg/app"
 	"github.com/whale-team/whaleEcho/pkg/bytescronv"
 	"github.com/whale-team/whaleEcho/pkg/echoproto"
+	"github.com/whale-team/whaleEcho/pkg/middleware"
 	"github.com/whale-team/whaleEcho/pkg/wserrors"
 	"go.uber.org/fx"
 	"google.golang.org/protobuf/proto"
@@ -53,11 +54,16 @@ func (h Handler) Handle(c *wsserver.Context) error {
 			err, bytescronv.BytesToString(c.Payload()))
 	}
 
-	ctx := c.Ctx
+	ctx := middleware.CtxWithReqID(c)
 	c.Ctx = context.WithValue(ctx, CoomandKey{}, command)
 
 	startAt := time.Now()
 	handleFunc := h.routeMap[command.Type]
+
+	if handleFunc == nil {
+		return wserrors.ErrCommandNotFound
+	}
+
 	err := handleFunc(c, command.Payload)
 	finishAt := time.Now()
 	fields := map[string]interface{}{
@@ -65,6 +71,7 @@ func (h Handler) Handle(c *wsserver.Context) error {
 		"started_at":  startAt.Format(time.RFC3339Nano),
 		"finished_at": finishAt.Format(time.RFC3339Nano),
 		"cost":        strconv.Itoa(int(finishAt.Sub(startAt).Microseconds())) + "μs",
+		"request_id":  c.Get(wsserver.CtxRequestID),
 	}
 	if err != nil {
 		log.Error().Err(err).Fields(fields).Msgf("handler: access log, process command(%s) failed", commandTypeMap[command.Type])

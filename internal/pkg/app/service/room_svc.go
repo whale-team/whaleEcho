@@ -4,12 +4,10 @@ import (
 	"context"
 	"errors"
 
+	"github.com/rs/zerolog/log"
 	"github.com/whale-team/whaleEcho/internal/pkg/app/entity"
 	"github.com/whale-team/whaleEcho/internal/pkg/repository/db"
-)
-
-var (
-	ErrRoomOutOfLimit = errors.New("cannot join room, number of mebmers out of limit")
+	"github.com/whale-team/whaleEcho/pkg/wserrors"
 )
 
 // CreateRoom create room is not exist,
@@ -17,17 +15,17 @@ var (
 func (s service) CreateRoom(ctx context.Context, room *entity.Room) error {
 	err := s.repo.GetRoom(ctx, room.UID, room)
 	if err != nil && !errors.Is(err, db.ErrNotFound) {
-		return err
+		return wserrors.Wrapf(wserrors.ErrRoomNotFound, "svc: CreateRoom room not found, roomUID:%s", room.UID)
 	}
 
 	if errors.Is(err, db.ErrNotFound) {
 		if err := s.repo.CreateRoom(ctx, room); err != nil {
-			return err
+			return wserrors.Wrapf(wserrors.ErrInternal, "svc: CreateRoom repo create room occur err, err:%+v roomUID:%s", err, room.UID)
 		}
 	}
 
 	if err := s.dispatcher.RegisterRoom(ctx, room); err != nil {
-		return err
+		return wserrors.Wrapf(wserrors.ErrInternal, "svc: CreateRoom dispatcher register room occur err, err:%+v roomUID:%s", err, room.UID)
 	}
 
 	return nil
@@ -43,26 +41,26 @@ func (s service) JoinRoom(ctx context.Context, roomUID string, user *entity.User
 	)
 
 	if err = s.repo.GetRoom(ctx, roomUID, room); err != nil {
-		return err
+		return wserrors.Wrapf(wserrors.ErrRoomNotFound, "svc: JoinRoom get room not found, roomUID:%s", roomUID)
 	}
 
 	if memberCount, err = s.repo.IncrMember(ctx, roomUID); err != nil {
-		return err
+		return wserrors.Wrapf(wserrors.ErrInternal, "svc: JoinRoom increase member failed, roomUID:%s", roomUID)
 	}
 
 	if memberCount > room.MembersLimit {
 		if _, err = s.repo.DecrMember(ctx, roomUID); err != nil {
-
+			log.Error().Stack().Err(err).Msgf("svc: JoinRoom decrease member failed, roomUID:%s", roomUID)
 		}
-		return ErrRoomOutOfLimit
+		return wserrors.ErrRoomOutOfLimit
 	}
 
 	if err = s.JoinAndCheckRoom(ctx, room, user); err != nil {
-		// log message join room failed
+		log.Error().Stack().Err(err).Msgf("svc: JoinRoom join user to room through dispatcher failed, roomUID:%s", roomUID)
 		_, err = s.repo.DecrMember(ctx, roomUID)
 	}
 	if err != nil {
-		// log decrease mebmer failed
+		log.Error().Stack().Err(err).Msgf("svc: JoinRoom decrease member failed, roomUID:%s", roomUID)
 		return err
 	}
 
@@ -100,6 +98,16 @@ func (s service) checkRoomInDispatcher(ctx context.Context, room *entity.Room) e
 }
 
 func (s service) LeaveRoom(ctx context.Context, roomUID string, userID string) error {
+	var err error
+
+	if err = s.dispatcher.RemoveUserFromRoom(ctx, roomUID, userID); err != nil {
+		return wserrors.Wrapf(wserrors.ErrInternal, "svc: LeaveRoom dispatcher remove user from room occur error, err:%+v", err)
+	}
+	_, err = s.repo.DecrMember(ctx, roomUID)
+	if err != nil {
+		return wserrors.Wrapf(wserrors.ErrInternal, "svc: LeaveRoom repo decrease room's members occur error, err:%+v", err)
+	}
+
 	return nil
 }
 

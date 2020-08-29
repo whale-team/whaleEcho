@@ -19,7 +19,7 @@ func createRoom(suite *testSuite, roomData *echoproto.Room) {
 	assert.NoError(suite.T, err)
 	err = suite.stan.Publish(suite.ctx, subjects.OpenRoomSubject, data)
 	assert.NoError(suite.T, err)
-	time.Sleep(5 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	assert.Contains(suite.T, suite.buf.String(), "receive message on subject(rooms.open")
 }
 
@@ -30,12 +30,29 @@ func joinRoom(suite *testSuite, userData *echoproto.User, status echoproto.Statu
 	assert.NoError(suite.T, err)
 	err = suite.SendCommand(conn, &command)
 	assert.NoError(suite.T, err)
-	time.Sleep(5 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	msg, err := suite.ReadResp(conn)
 	assert.NoError(suite.T, err)
 	assert.Equal(suite.T, msg.Status, status)
 	assert.Contains(suite.T, suite.buf.String(), "join_room")
 	return conn
+}
+
+func leaveRoom(suite *testSuite, conn *websocket.Conn, userData *echoproto.User, status echoproto.Status) {
+	var err error
+	if conn == nil {
+		conn, err = dial(suite.addr, suite.port)
+		assert.NoError(suite.T, err)
+	}
+	command, err := newCommand(userData, echoproto.CommandType_LeaveRoom)
+	assert.NoError(suite.T, err)
+	err = suite.SendCommand(conn, &command)
+	assert.NoError(suite.T, err)
+	time.Sleep(10 * time.Millisecond)
+	msg, err := suite.ReadResp(conn)
+	assert.NoError(suite.T, err)
+	assert.Equal(suite.T, msg.Status, status)
+	assert.Contains(suite.T, suite.buf.String(), "leave_room")
 }
 
 var _ = Describe("Room Delivery Test", func() {
@@ -121,6 +138,38 @@ var _ = Describe("Room Delivery Test", func() {
 				room = suite.rms.GetRoom(userData.RoomUid)
 				assert.NotNil(suite.T, room)
 				assert.Equal(suite.T, room.CurrentMembersCount(), 0)
+			})
+		})
+	})
+
+	Describe("WSHandler#LeaveRoom", func() {
+		Context("when user levea room", func() {
+			var (
+				room = suite.rooms[0]
+				user = suite.users[0]
+				conn = &websocket.Conn{}
+			)
+
+			JustBeforeEach(func() {
+				createRoom(suite, room)
+				user.RoomUid = room.Uid
+				conn = joinRoom(suite, user, echoproto.Status_OK)
+			})
+
+			It("should close connection", func() {
+				r := suite.rms.GetRoom(room.Uid)
+				assert.NotNil(suite.T, r)
+				assert.Equal(suite.T, r.CurrentMembersCount(), 1)
+				err := suite.repo.GetRoom(suite.ctx, room.Uid, r)
+				assert.NoError(suite.T, err)
+				assert.Equal(suite.T, r.MembersCount, int64(1))
+				leaveRoom(suite, conn, user, echoproto.Status_OK)
+				r = suite.rms.GetRoom(room.Uid)
+				assert.NotNil(suite.T, r)
+				assert.Equal(suite.T, r.CurrentMembersCount(), 0)
+				err = suite.repo.GetRoom(suite.ctx, room.Uid, r)
+				assert.NoError(suite.T, err)
+				assert.Equal(suite.T, r.MembersCount, int64(0))
 			})
 		})
 	})

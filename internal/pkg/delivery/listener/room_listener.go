@@ -8,9 +8,12 @@ import (
 )
 
 func (ln Listener) CreateRoom(ctx context.Context, data []byte) error {
-	room := &entity.Room{}
+	var (
+		room = &entity.Room{}
+		err  error
+	)
 
-	if err := converter.UnmarshalRoom(data, room); err != nil {
+	if err = converter.UnmarshalRoom(data, room); err != nil {
 		return err
 	}
 
@@ -18,9 +21,12 @@ func (ln Listener) CreateRoom(ctx context.Context, data []byte) error {
 }
 
 func (ln Listener) DispatchMessage(ctx context.Context, data []byte) error {
-	msg := &entity.Message{}
+	var (
+		msg = &entity.Message{}
+		err error
+	)
 
-	if err := converter.UnmarshalMessage(data, msg); err != nil {
+	if err = converter.UnmarshalMessage(data, msg); err != nil {
 		return err
 	}
 

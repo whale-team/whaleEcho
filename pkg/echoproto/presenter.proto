@@ -6,6 +6,7 @@ import "enum.proto";
 message Command {
   CommandType type = 1;
   bytes payload = 2;
+  string token = 3;
 }
 
 message User {

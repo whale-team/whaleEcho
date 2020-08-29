@@ -22,11 +22,10 @@ func publishMessage(suite *testSuite, conn *websocket.Conn, message *echoproto.M
 	assert.NoError(suite.T, err)
 	err = suite.SendCommand(conn, &command)
 	assert.NoError(suite.T, err)
-	time.Sleep(5 * time.Millisecond)
+	time.Sleep(20 * time.Millisecond)
 	msg, err := suite.ReadResp(conn)
 	assert.NoError(suite.T, err)
 	assert.Equal(suite.T, msg.Status, status)
-	assert.Contains(suite.T, suite.buf.String(), "send_message")
 	return conn
 }
 
@@ -53,24 +52,24 @@ var _ = Describe("Message Delivery Test", func() {
 		})
 	})
 
-	FDescribe("Listener#DispatcherMessage", func() {
+	Describe("Listener#DispatcherMessage", func() {
+		var (
+			room  = suite.rooms[0]
+			user1 = suite.users[0]
+			user2 = suite.users[1]
+			conn1 = &websocket.Conn{}
+			conn2 = &websocket.Conn{}
+		)
+
+		JustBeforeEach(func() {
+			createRoom(suite, room)
+			user1.RoomUid = room.Uid
+			user2.RoomUid = room.Uid
+			conn1 = joinRoom(suite, user1, echoproto.Status_OK)
+			conn2 = joinRoom(suite, user2, echoproto.Status_OK)
+		})
+
 		Context("when client send message", func() {
-			var (
-				room  = suite.rooms[0]
-				user1 = suite.users[0]
-				user2 = suite.users[1]
-				conn1 = &websocket.Conn{}
-				conn2 = &websocket.Conn{}
-			)
-
-			BeforeEach(func() {
-				createRoom(suite, room)
-				user1.RoomUid = room.Uid
-				user2.RoomUid = room.Uid
-				conn1 = joinRoom(suite, user1, echoproto.Status_OK)
-				conn2 = joinRoom(suite, user2, echoproto.Status_OK)
-			})
-
 			It("should dispatch message to user2", func() {
 				msgData := suite.messages[0]
 				msgData.RoomUid = room.Uid

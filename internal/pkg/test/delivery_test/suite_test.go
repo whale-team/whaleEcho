@@ -12,8 +12,10 @@ import (
 	"github.com/gorilla/websocket"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/vicxu416/goinfra/testutil"
+	"github.com/vicxu416/goinfra/zlogging"
 	"github.com/vicxu416/wsserver"
 	"github.com/whale-team/whaleEcho/configs"
 	"github.com/whale-team/whaleEcho/internal/pkg/app"
@@ -23,6 +25,7 @@ import (
 	"github.com/whale-team/whaleEcho/internal/pkg/dispatcher"
 	"github.com/whale-team/whaleEcho/internal/pkg/repository/db"
 	"github.com/whale-team/whaleEcho/pkg/echoproto"
+	"github.com/whale-team/whaleEcho/pkg/middleware"
 	"github.com/whale-team/whaleEcho/pkg/stanclient"
 	"go.uber.org/fx"
 	"google.golang.org/protobuf/proto"
@@ -67,7 +70,7 @@ func dial(addr, port string) (*websocket.Conn, error) {
 
 func (suite *testSuite) clear() {
 	suite.buf.Reset()
-	suite.rms.Clear()
+	suite.rms.Reset()
 	suite.redisClient.FlushAll(suite.ctx).Result()
 }
 
@@ -123,6 +126,7 @@ func setupSuite(addr, port string) (*testSuite, error) {
 	if err != nil {
 		return nil, err
 	}
+	zlogging.SetupLogger(config.Log)
 
 	suite := testSuite{
 		ctx:       context.Background(),
@@ -133,11 +137,9 @@ func setupSuite(addr, port string) (*testSuite, error) {
 		port:      port,
 	}
 
-	writer := io.MultiWriter(suite.buf, os.Stdout)
-
+	writer := zerolog.ConsoleWriter{Out: io.MultiWriter(suite.buf, os.Stdout)}
 	log.Logger = log.Output(writer).With().Logger()
-
-	suite.serv = wsserver.NewDefault()
+	suite.serv = middleware.SetupWsServer(config.WsServer)
 	suite.serv.Addr = addr
 	suite.serv.Port = port
 

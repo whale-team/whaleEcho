@@ -25,7 +25,7 @@ require (
 	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.6.1
 	github.com/vicxu416/goinfra v0.0.12
-	github.com/vicxu416/wsserver v0.0.3
+	github.com/vicxu416/wsserver v0.0.7
 	go.uber.org/fx v1.13.0
 	google.golang.org/protobuf v1.25.0
 )

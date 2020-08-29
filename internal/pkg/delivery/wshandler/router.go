@@ -11,11 +11,12 @@ func (h *Handler) SetupRoutes() {
 
 	routeMap[echoproto.CommandType_SendMessage] = h.PublishMessage
 	routeMap[echoproto.CommandType_JoinRoom] = h.JoinRoom
-	// routeMap[echoproto.CommandType_LeaveRoom] = h.LeaveRoom
+	routeMap[echoproto.CommandType_LeaveRoom] = h.LeaveRoom
 	h.routeMap = routeMap
 }
 
-func SetupHandler(serv *wsserver.Server, h Handler) {
+func SetupHandler(serv *wsserver.Server, h Handler) error {
 	h.SetupRoutes()
 	serv.MsgHandlerFunc = h.Handle
+	return nil
 }

@@ -87,13 +87,14 @@ type Server struct {
 
 // NewContext create a instance of connection context
 func (serv *Server) NewContext(conn net.Conn) *Context {
-	onceConn := &onceCloseConn{Conn: conn}
+	onceConn := &onceCloseConn{Conn: conn, wg: serv.wg}
 	ctx, cancel := context.WithCancel(context.Background())
 	return &Context{
 		ID:        uuid.New().String(),
 		Conn:      onceConn,
 		Ctx:       ctx,
 		ctxCancel: cancel,
+		serv:      serv,
 	}
 }
 
@@ -215,8 +216,8 @@ func (serv *Server) upgradeToWS(conn net.Conn) (*Context, error) {
 		return nil, err
 	}
 	wsCtx := serv.getContext()
-	wsCtx.Reset(conn)
 	wsCtx.serv = serv
+	wsCtx.Reset(conn)
 	serv.wg.Add(1)
 	return wsCtx, nil
 }

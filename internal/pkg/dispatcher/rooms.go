@@ -30,13 +30,21 @@ func (c *Rooms) Clear() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	c.roomsMap = make(map[string]*entity.Room)
+	for _, r := range c.roomsMap {
+		r.Clear()
+	}
+
+	c.Reset()
 }
 
 func (c *Rooms) Len() int {
 	c.mu.RLock()
 	defer c.mu.RUnlock()
 	return len(c.roomsMap)
+}
+
+func (c *Rooms) Reset() {
+	c.roomsMap = make(map[string]*entity.Room)
 }
 
 func (c *Rooms) GetRoom(roomUID string) *entity.Room {

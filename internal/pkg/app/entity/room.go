@@ -2,16 +2,9 @@ package entity
 
 import (
 	"sync"
-)
 
-const (
-	maxWorker = 5
+	"github.com/rs/zerolog/log"
 )
-
-// NewRoom construct room struct
-func NewRoom() *Room {
-	return &Room{}
-}
 
 // Room represent chating room
 type Room struct {
@@ -62,6 +55,19 @@ func (room *Room) PublishMessage(msg []byte) error {
 	}
 
 	return nil
+}
+
+func (room *Room) Clear() {
+	room.rw.Lock()
+	defer room.rw.Unlock()
+
+	var err error
+
+	for _, u := range room.getUsersMap() {
+		if err = u.CloseConn(); err != nil {
+			log.Error().Err(err).Msgf("room: Clear close user connection occur error, err:%+v, userUID:%s", err, u.UID)
+		}
+	}
 }
 
 func (room *Room) SendCloseMsg() error {

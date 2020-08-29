@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	"github.com/whale-team/whaleEcho/internal/pkg/repository/db"
+	"github.com/whale-team/whaleEcho/pkg/middleware"
 	"github.com/whale-team/whaleEcho/pkg/stanclient"
 	"go.uber.org/fx"
 
@@ -21,10 +22,7 @@ var _config Configuration
 // Configuration represent app configuration
 type Configuration struct {
 	fx.Out
-	WsServer struct {
-		Addr string `yaml:"addr"`
-		Port string `yaml:"port"`
-	} `yaml:"ws_server"`
+	WsServer middleware.WSConfig `yaml:"ws_server"`
 
 	Log   zlogging.Config   `yaml:"log"`
 	Stan  stanclient.Config `yaml:"stan"`

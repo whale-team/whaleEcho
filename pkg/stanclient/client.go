@@ -8,6 +8,17 @@ import (
 	"github.com/nats-io/stan.go"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/whale-team/whaleEcho/pkg/bytescronv"
+	"github.com/whale-team/whaleEcho/pkg/middleware"
+)
+
+const (
+	reqIDLen = 32
+)
+
+var (
+	reqIDFlag = bytescronv.StringToBytes("$%&*&%$%&!!!1231")
+	flagLen   = len(reqIDFlag)
 )
 
 type Subscription interface {
@@ -33,14 +44,15 @@ func (h msgHandler) Handle() func(msg *stan.Msg) {
 			logger    zerolog.Logger
 		)
 
-		err = h(ctx, msg.Data)
+		data := msg.Data
+		err = h(ctx, data)
 		endTime := time.Now()
 		logger = log.With().Fields(
 			map[string]interface{}{
 				"start_time": startTime,
 				"end_time":   endTime,
 				"latency":    strconv.FormatInt(int64(endTime.Sub(startTime)), 10),
-				"data":       string(msg.Data),
+				"data":       string(data),
 			},
 		).Logger()
 
@@ -69,9 +81,7 @@ func (c *Client) Publish(ctx context.Context, subject string, data []byte) error
 }
 
 func (c *Client) Close() error {
-	c.getConn().Close()
-	c.getConn().NatsConn().Close()
-	return nil
+	return c.conn.Close()
 }
 
 func (c *Client) duration() stan.SubscriptionOption {
@@ -80,4 +90,22 @@ func (c *Client) duration() stan.SubscriptionOption {
 
 func (c *Client) getConn() stan.Conn {
 	return c.conn.GetConn()
+}
+
+func attachReqID(ctx context.Context, data []byte) []byte {
+	reqID := middleware.CtxGetReqID(ctx)
+	if reqID != "" {
+		data = append(data, bytescronv.StringToBytes(reqID)...)
+		data = append(data, reqIDFlag...)
+	}
+	return data
+}
+
+func fetchReqID(data []byte) (string, []byte) {
+	var requestID string
+	if bytescronv.BytesToString(data[len(data)-flagLen:len(data)]) == bytescronv.BytesToString(reqIDFlag) {
+		requestID = bytescronv.BytesToString((data[len(data)-flagLen-reqIDLen : len(data)-flagLen]))
+		data = data[:len(data)-flagLen-reqIDLen]
+	}
+	return requestID, data
 }

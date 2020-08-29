@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"github.com/pkg/errors"
 	"github.com/rs/zerolog/log"
 	"github.com/vicxu416/wsserver"
 	"github.com/whale-team/whaleEcho/pkg/echoproto"
@@ -10,8 +9,7 @@ import (
 )
 
 func WsErrorHandle(c *wsserver.Context, err error) {
-	log.Error().Stack().Err(err).Msg("handler: server handle command fail")
-	causeErr := errors.Cause(err)
+	causeErr := wserrors.Cause(err)
 	wsErr, ok := causeErr.(*wserrors.WsError)
 	if !ok {
 		wsErr = &wserrors.WsError{
@@ -45,15 +43,16 @@ func WsConnBuildHandle(c *wsserver.Context) {
 }
 
 func WsConnCloseHandle(c *wsserver.Context) {
+	userUID := c.Get("user_uid")
+	if userUID != nil {
+		userUID = userUID.(string)
+	} else {
+		userUID = ""
+	}
+
 	if err := c.Close(); err != nil {
-		log.Error().Err(err).Msg("ws: client closed connection, server close connection failed")
+		log.Error().Err(err).Msgf("ws: client(%s) closed connection, server close connection failed, userUID:%s", c.ID, userUID)
 		return
 	}
-	log.Info().Msg("ws: client closed connection, server closed connection successfully")
-}
-
-func WsRecovery(c *wsserver.Context) {
-	if err := recover(); err != nil {
-		WsErrorHandle(c, err.(error))
-	}
+	log.Info().Msgf("ws: client(%s) closed connection, server closed connection successfully, userUID:%s", c.ID, userUID)
 }

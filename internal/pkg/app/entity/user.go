@@ -17,6 +17,10 @@ func (u *User) BindConn(connCtx *wsserver.Context) {
 	u.connCtx = connCtx
 }
 
+func (u *User) CloseConn() error {
+	return u.connCtx.Close()
+}
+
 // IsValid return false if connCtx is nil
 func (u *User) IsValid() bool {
 	return u.connCtx != nil

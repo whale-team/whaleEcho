@@ -60,3 +60,13 @@ func (d *Dispatcher) GetRoom(ctx context.Context, roomUID string) *entity.Room {
 	}
 	return room
 }
+
+func (d *Dispatcher) RemoveUserFromRoom(ctx context.Context, roomUID, userUID string) error {
+	room := d.rms.GetRoom(roomUID)
+	if room == nil {
+		return nil
+	}
+
+	room.RemoveUser(userUID)
+	return nil
+}

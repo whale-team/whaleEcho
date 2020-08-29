@@ -3,6 +3,7 @@ package converter
 import (
 	"github.com/whale-team/whaleEcho/internal/pkg/app/entity"
 	"github.com/whale-team/whaleEcho/pkg/echoproto"
+	"github.com/whale-team/whaleEcho/pkg/wserrors"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -12,7 +13,7 @@ func UnmarshalMessage(data []byte, msg *entity.Message) error {
 		err      error
 	)
 	if err = proto.Unmarshal(data, &msgProto); err != nil {
-		return err
+		return wserrors.Wrapf(wserrors.ErrInputInvalid, "delivery: umarshal message occurs error, err:%+v ", err)
 	}
 
 	msg.Data = data
@@ -28,7 +29,7 @@ func UnmarshalUser(data []byte, user *entity.User) error {
 		err       error
 	)
 	if err = proto.Unmarshal(data, &userProto); err != nil {
-		return err
+		return wserrors.Wrapf(wserrors.ErrInputInvalid, "delivery: umarshal user occurs error, err:%+v ", err)
 	}
 	user.UID = userProto.Uid
 	user.Name = userProto.Name
@@ -42,7 +43,7 @@ func UnmarshalRoom(data []byte, room *entity.Room) error {
 		err       error
 	)
 	if err = proto.Unmarshal(data, &roomProto); err != nil {
-		return err
+		return wserrors.Wrapf(wserrors.ErrInputInvalid, "delivery: umarshal room occurs error, err:%+v ", err)
 	}
 	room.UID = roomProto.Uid
 	room.Name = roomProto.Name
